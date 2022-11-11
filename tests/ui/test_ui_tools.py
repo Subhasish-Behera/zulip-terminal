@@ -1983,6 +1983,7 @@ class TestMessageBox:
         [
             {
                 "id": 4,
+                "sender_id": 4,
                 "type": "stream",
                 "display_recipient": "Verona",
                 "stream_id": 5,
@@ -2021,6 +2022,7 @@ class TestMessageBox:
         [
             {
                 "id": 4,
+                "sender_id": 4,
                 "type": "stream",
                 "display_recipient": "Verona",
                 "stream_id": 5,
@@ -2196,6 +2198,7 @@ class TestMessageBox:
         [
             {
                 "id": 4,
+                "sender_id": 4,
                 "type": "stream",
                 "display_recipient": "Verona",
                 "stream_id": 5,
@@ -2221,11 +2224,11 @@ class TestMessageBox:
         "expected_header, to_vary_in_last_message",
         [
             (
-                [STATUS_INACTIVE, "alice", " ", "DAYDATETIME"],
-                {"sender_full_name": "bob"},
+                [STATUS_INACTIVE, "alice (4)", " ", "DAYDATETIME"],
+                {"sender_id": "4"},
             ),
             ([" ", " ", " ", "DAYDATETIME"], {"timestamp": 1532103779}),
-            ([STATUS_INACTIVE, "alice", " ", "DAYDATETIME"], {"timestamp": 0}),
+            ([STATUS_INACTIVE, "alice (4)", " ", "DAYDATETIME"], {"timestamp": 0}),
         ],
         ids=[
             "show_author_as_authors_different",
@@ -2321,7 +2324,7 @@ class TestMessageBox:
     @pytest.mark.parametrize(
         "to_vary_in_last_message, update_required",
         [
-            ({"sender_full_name": "Unique name (won't be in next message)"}, True),
+            ({"sender_id": "Unique id (won't be in next message)"}, True),
             ({}, False),
         ],
         ids=[

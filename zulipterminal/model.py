@@ -4,7 +4,7 @@ Defines the `Model`, fetching and storing data retrieved from the Zulip server
 
 import json
 import time
-from collections import OrderedDict, defaultdict
+from collections import Counter, OrderedDict, defaultdict
 from concurrent.futures import Future, ThreadPoolExecutor, wait
 from copy import deepcopy
 from datetime import datetime
@@ -1019,6 +1019,7 @@ class Model:
         # and a user-id to email mapping
         self.user_dict: Dict[str, Dict[str, Any]] = dict()
         self.user_id_email_dict: Dict[int, str] = dict()
+        self.user_name_counter: Dict[str, int] = Counter()
         for user in self.initial_data["realm_users"]:
             if self.user_id == user["user_id"]:
                 self._all_users_by_id[self.user_id] = user
@@ -1131,6 +1132,7 @@ class Model:
         user_list.insert(0, current_user)
         self.user_dict[current_user["email"]] = current_user
         self.user_id_email_dict[self.user_id] = current_user["email"]
+        self.user_name_counter = Counter(user["full_name"] for user in user_list)
 
         return user_list
 
@@ -1144,6 +1146,12 @@ class Model:
             raise RuntimeError("Invalid user ID.")
 
         return self.user_dict[user_email]["full_name"]
+
+    def is_user_name_duplicate(self, user_name: str) -> bool:
+        """
+        Returns if the count of the users with the same name is more than 1.
+        """
+        return self.user_name_counter.get(user_name, -1) > 1
 
     def _subscribe_to_streams(self, subscriptions: List[Subscription]) -> None:
         def make_reduced_stream_data(stream: Subscription) -> StreamData:

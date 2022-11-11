@@ -1572,8 +1572,17 @@ class MessageBox(urwid.Pile):
             if any(
                 different[key] for key in ("recipients", "author", "24h", "author_id")
             ):
-                text["author"] = ("msg_sender", message["this"]["author"])
-
+                if self.model.is_user_name_duplicate(message["this"]["author"]):
+                    text["author"] = (
+                        "msg_sender",
+                        message["this"]["author"]
+                        + " "
+                        + "("
+                        + str(message["this"]["author_id"])
+                        + ")",
+                    )
+                else:
+                    text["author"] = ("msg_sender", message["this"]["author"])
                 # TODO: Refactor to use user ids for look up instead of emails.
                 email = self.message.get("sender_email", "")
                 user = self.model.user_dict.get(email, None)
