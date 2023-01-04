@@ -899,13 +899,19 @@ class WriteBox(urwid.Pile):
             if self.focus_position == self.FOCUS_CONTAINER_HEADER:
                 self.focus_position = self.FOCUS_CONTAINER_MESSAGE
             else:
-                self.focus_position = self.FOCUS_CONTAINER_HEADER
+                if self.compose_box_status == "open_with_stream":
+                    self.focus_position = self.FOCUS_CONTAINER_HEADER
             if self.compose_box_status == "open_with_stream":
                 if self.msg_edit_state is not None:
                     header.focus_col = self.FOCUS_HEADER_BOX_TOPIC
                 else:
                     header.focus_col = self.FOCUS_HEADER_BOX_STREAM
             else:
+                self.model.controller.report_error(
+                    [
+                        " Recipient(s) can not be edited while editing a PM."
+                    ]
+                )
                 header.focus_col = self.FOCUS_HEADER_BOX_RECIPIENT
 
         key = super().keypress(size, key)
