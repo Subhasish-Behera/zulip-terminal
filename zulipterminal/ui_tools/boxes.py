@@ -298,7 +298,7 @@ class WriteBox(urwid.Pile):
     ) -> bool:
         tidied_recipients = list()
         invalid_recipients = list()
-
+        print(write_box.edit_text)
         recipients = [
             recipient.strip()
             for recipient in write_box.edit_text.split(",")
@@ -866,12 +866,17 @@ class WriteBox(urwid.Pile):
                     )
         elif is_command_key("CYCLE_COMPOSE_FOCUS", key):
             if len(self.contents) == 0:
+                print("hii")
                 return key
+                print("hii2")
             header = self.header_write_box
             # toggle focus position
             if self.focus_position == self.FOCUS_CONTAINER_HEADER:
+                print("hii12")
                 if self.compose_box_status == "open_with_stream":
+                    print("hii13")
                     if header.focus_col == self.FOCUS_HEADER_BOX_STREAM:
+                        print("hii14")
                         if self.msg_edit_state is None:
                             stream_name = header[self.FOCUS_HEADER_BOX_STREAM].edit_text
                         else:
@@ -913,6 +918,8 @@ class WriteBox(urwid.Pile):
                     all_valid = self._tidy_valid_recipients_and_notify_invalid_ones(
                         self.to_write_box
                     )
+
+                    print("hii3")
                     if not all_valid:
                         return key
                     # We extract recipients' user_ids and emails only once we know
@@ -924,8 +931,10 @@ class WriteBox(urwid.Pile):
                 return key
             if self.focus_position == self.FOCUS_CONTAINER_HEADER:
                 self.focus_position = self.FOCUS_CONTAINER_MESSAGE
+                print("hii10")
             else:
                 self.focus_position = self.FOCUS_CONTAINER_HEADER
+                print("hii9")
             if self.compose_box_status == "open_with_stream":
                 if self.msg_edit_state is not None:
                     header.focus_col = self.FOCUS_HEADER_BOX_TOPIC
@@ -933,6 +942,7 @@ class WriteBox(urwid.Pile):
                     header.focus_col = self.FOCUS_HEADER_BOX_STREAM
             else:
                 header.focus_col = self.FOCUS_HEADER_BOX_RECIPIENT
+                print("hii8")
 
         key = super().keypress(size, key)
         return key
