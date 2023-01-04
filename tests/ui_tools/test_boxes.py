@@ -1608,7 +1608,7 @@ class TestWriteBox:
                 "private",
                 True,
                 False,
-                "CONTAINER_HEADER",
+                "CONTAINER_MESSAGE",
                 "HEADER_BOX_RECIPIENT",
                 id="message_to_recipient_box",
             ),
