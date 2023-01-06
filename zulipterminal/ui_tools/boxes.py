@@ -82,6 +82,15 @@ class WriteBox(urwid.Pile):
         # Prioritizes autocomplete in message body
         self.recipient_user_ids: List[int]
 
+        # Marks if the write box formed is involves [EDIT_MESSAGE: e] key
+        # Only used for private messages(for now)
+        self.edit_keypressed: bool
+        self.edit_keypressed = False
+
+        # Marks if the write box formed is involves [REPLY_MESSAGE: r] key
+        # Only used for private messages(for now)
+        self.reply_keypressed: bool
+        self.reply_keypressed = False
         # Updates server on PM typing events
         # Is separate from recipient_user_ids because we
         # don't include the user's own id in this list
@@ -122,6 +131,8 @@ class WriteBox(urwid.Pile):
         self.stream_id = None
         self.to_write_box = None
 
+        self.edit_keypressed = False
+        self.reply_keypressed = False
         # Maintain synchrony between *_user_ids by setting them
         # to empty lists together using the helper method.
         self._set_regular_and_typing_recipient_user_ids(None)
@@ -901,15 +912,21 @@ class WriteBox(urwid.Pile):
             else:
                 if self.compose_box_status == "open_with_stream":
                     self.focus_position = self.FOCUS_CONTAINER_HEADER
+                if (
+                    self.compose_box_status == "open_with_private"
+                    and (self.edit_keypressed and self.reply_keypressed) is not True
+                ):
+                    self.focus_position = self.FOCUS_CONTAINER_HEADER
             if self.compose_box_status == "open_with_stream":
                 if self.msg_edit_state is not None:
                     header.focus_col = self.FOCUS_HEADER_BOX_TOPIC
                 else:
                     header.focus_col = self.FOCUS_HEADER_BOX_STREAM
             else:
-                self.model.controller.report_error(
-                    [" Recipient(s) can not be edited while editing a PM."]
-                )
+                if (self.edit_keypressed and self.reply_keypressed) is True:
+                    self.model.controller.report_error(
+                        [" Recipient(s) can not be edited while editing a PM."]
+                    )
                 header.focus_col = self.FOCUS_HEADER_BOX_RECIPIENT
 
         key = super().keypress(size, key)
