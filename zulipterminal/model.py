@@ -1388,7 +1388,7 @@ class Model:
         if (
             len(narrow) == 1
             and narrow[0][0] == "pm_with"
-            and sender_email in narrow[0][1].split(",")
+            and sender_email in [email.strip() for email in narrow[0][1].split(",")]
             and sender_id != self.user_id
         ):
             if event["op"] == "start":
