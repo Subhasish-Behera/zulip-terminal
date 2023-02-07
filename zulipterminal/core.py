@@ -12,7 +12,7 @@ from collections import OrderedDict
 from functools import partial
 from platform import platform
 from types import TracebackType
-from typing import Any, Dict, List, Optional, Tuple, Type, Union
+from typing import Any, List, Optional, Set, Tuple, Type, Union
 
 import pyperclip
 import urwid
@@ -83,7 +83,7 @@ class Controller:
 
         self._editor: Optional[Any] = None
 
-        self.active_conversation_info: Dict[str, Any] = {}
+        self.active_conversation_info: Set[str] = set()
         self.is_typing_notification_in_progress = False
 
         self.show_loading()
@@ -436,13 +436,26 @@ class Controller:
 
         # Until conversation becomes "inactive" like when a `stop` event is sent
         while self.active_conversation_info:
-            sender_name = self.active_conversation_info["sender_name"]
-            self.view.set_footer_text(
-                [
-                    ("footer_contrast", " " + sender_name + " "),
+            active_conversation_info = ", ".join(
+                map(str, self.active_conversation_info)
+            )
+            no_of_typing_users = len(self.active_conversation_info)
+            if no_of_typing_users == 1:
+                typing_text = [
+                    ("footer_contrast", " " + active_conversation_info + " "),
                     " is typing" + next(dots),
                 ]
-            )
+            elif no_of_typing_users < 4:
+                typing_text = [
+                    ("footer_contrast", " " + active_conversation_info + " "),
+                    " are typing" + next(dots),
+                ]
+            else:
+                typing_text = [
+                    ("footer_contrast", "Multiple people are" + " "),
+                    " are typing" + next(dots),
+                ]
+            self.view.set_footer_text(typing_text)
             time.sleep(0.45)
 
         self.is_typing_notification_in_progress = False
