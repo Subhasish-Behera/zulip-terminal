@@ -1374,8 +1374,7 @@ class Model:
 
         narrow = self.narrow
         controller = self.controller
-        active_conversation_info = controller.active_conversation_info
-        typing_users=self.controller.typing_users
+        active_conversation_info = self.controller.active_conversation_info
         sender_email = event["sender"]["email"]
         sender_id = event["sender"]["user_id"]
 
@@ -1389,16 +1388,14 @@ class Model:
         ):
             if event["op"] == "start":
                 sender_name = self.user_dict[sender_email]["full_name"]
-                typing_users.add(sender_name)
-                active_conversation_info["sender_name"] = sender_name
+                active_conversation_info.add(sender_name)
 
                 if not controller.is_typing_notification_in_progress:
                     controller.show_typing_notification()
 
             elif event["op"] == "stop":
                 sender_name = self.user_dict[sender_email]["full_name"]
-                typing_users.discard(sender_name)
-                controller.active_conversation_info = {}
+                active_conversation_info.discard(sender_name)
 
             else:
                 raise RuntimeError("Unknown typing event operation")

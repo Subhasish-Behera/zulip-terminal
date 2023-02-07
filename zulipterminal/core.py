@@ -79,9 +79,8 @@ class Controller:
 
         self._editor: Optional[Any] = None
 
-        self.active_conversation_info: Dict[str, Any] = {}
         self.is_typing_notification_in_progress = False
-        self.typing_users = set()
+        self.active_conversation_info = set()
 
         self.show_loading()
         client_identifier = f"ZulipTerminal/{ZT_VERSION} {platform()}"
@@ -433,19 +432,18 @@ class Controller:
         dots = itertools.cycle(["", ".", "..", "..."])
 
         # Until conversation becomes "inactive" like when a `stop` event is sent
-        while self.typing_users:
-            if(len(self.typing_users)==1):
-                #sender_name = self.active_conversation_info["sender_name"]
+        while self.active_conversation_info:
+            if(len(self.active_conversation_info)==1):
                 self.view.set_footer_text(
                     [
-                        ("footer_contrast", " ".join(self.typing_users) + " "),
+                        ("footer_contrast", " ".join(self.active_conversation_info) + " "),
                         " is typing" + next(dots),
                     ]
                 )
-            elif(len(self.typing_users)<4):
+            elif(len(self.active_conversation_info)<4):
                 self.view.set_footer_text(
                     [
-                        ("footer_contrast", " ".join(self.typing_users) + " "),
+                        ("footer_contrast", " ".join(self.active_conversation_info) + " "),
                         " are typing" + next(dots),
                     ]
                 )
