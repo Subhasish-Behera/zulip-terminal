@@ -553,7 +553,7 @@ class TestController:
     @pytest.mark.parametrize(
         "active_conversation_info",
         [
-            case({"sender_name": "hamlet"}, id="in_pm_narrow_with_sender_typing:start"),
+            case({"hamlet"}, id="in_pm_narrow_with_sender_typing:start"),
             case({}, id="in_pm_narrow_with_sender_typing:stop"),
         ],
     )
@@ -561,7 +561,7 @@ class TestController:
         self,
         mocker: MockerFixture,
         controller: Controller,
-        active_conversation_info: Dict[str, str],
+        active_conversation_info: Set[Any],
     ) -> None:
         set_footer_text = mocker.patch(VIEW + ".set_footer_text")
         sleep = mocker.patch(MODULE + ".time.sleep")

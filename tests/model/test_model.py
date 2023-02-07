@@ -7,6 +7,7 @@ import pytest
 from pytest import param as case
 from zulip import Client, ZulipError
 
+from typing import Set
 from zulipterminal.config.symbols import STREAM_TOPIC_SEPARATOR
 from zulipterminal.helper import initial_index, powerset
 from zulipterminal.model import (
@@ -2882,7 +2883,7 @@ class TestModel:
                     "id": 0,
                 },
                 False,
-                {"sender_name": "hamlet"},
+                {"hamlet"},
                 True,
                 id="in_pm_narrow_with_sender_typing:start",
             ),
@@ -2898,7 +2899,7 @@ class TestModel:
                     "id": 0,
                 },
                 True,
-                {"sender_name": "hamlet"},
+                {"hamlet"},
                 False,
                 id="in_pm_narrow_with_sender_typing:start_while_animation_in_progress",
             ),
@@ -3005,8 +3006,8 @@ class TestModel:
 
         if expected_active_conversation_info:
             assert (
-                model.controller.active_conversation_info["sender_name"]
-                == expected_active_conversation_info["sender_name"]
+                model.controller.active_conversation_info
+                == expected_active_conversation_info
             )
         assert show_typing_notification.called == expected_show_typing_notification
 
