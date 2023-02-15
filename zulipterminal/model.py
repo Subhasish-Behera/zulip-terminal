@@ -100,6 +100,7 @@ class Model:
     def __init__(self, controller: Any) -> None:
         self.controller = controller
         self.client = controller.client
+        # self.alert_words = fetch_alert_words()
 
         self.narrow: List[Any] = []
         self._have_last_message: Dict[str, bool] = {}
@@ -824,6 +825,16 @@ class Model:
             return response["message_history"]
         display_error_if_present(response, self.controller)
         return list()
+    def fetch_alert_words(self):
+        """
+            Fetches alert words.
+        """
+        response = self.client.get_alert_words()
+        if response["result"] == "success":
+            return response["alert_words"]
+        display_error_if_present(response, self.controller)
+
+        return None
 
     def fetch_raw_message_content(self, message_id: int) -> Optional[str]:
         """

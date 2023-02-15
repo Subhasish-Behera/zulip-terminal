@@ -943,6 +943,7 @@ class MessageBox(urwid.Pile):
     def __init__(self, message: Message, model: "Model", last_message: Any) -> None:
         self.model = model
         self.message = message
+        self.mido = message["id"]
         self.header: List[Any] = []
         self.content: urwid.Text = urwid.Text("")
         self.footer: List[Any] = []
@@ -1250,10 +1251,17 @@ class MessageBox(urwid.Pile):
 
     @classmethod
     def soup2markup(
-        cls, soup: Any, metadata: Dict[str, Any], **state: Any
+        cls,soup: Any, metadata: Dict[str, Any],mido=0, **state: Any
     ) -> Tuple[
         List[Any], "OrderedDict[str, Tuple[str, int, bool]]", List[Tuple[str, str]]
     ]:
+
+
+        if mido == 1507822:
+            print("cls")
+            print("soup:", soup)
+            print("metadata:", metadata)
+            print("state:", state)
         # Ensure a string is provided, in case the soup finds none
         # This could occur if eg. an image is removed or not shown
         markup: List[Union[str, Tuple[Optional[str], Any]]] = [""]
@@ -1510,10 +1518,13 @@ class MessageBox(urwid.Pile):
                 metadata["time_mentions"].append((time_string, source_text))
             else:
                 markup.extend(cls.soup2markup(element, metadata)[0])
+                # print("markup",markup)
+                # print("metadata["message_links"]",metadata["message_links"])
+                # print("metadata["time_mentions"]",metadata["time_mentions"])
         return markup, metadata["message_links"], metadata["time_mentions"]
 
     def main_view(self) -> List[Any]:
-
+        # if(self.message["flags"] )
         # Recipient Header
         if self.need_recipient_header():
             if self.message["type"] == "stream":
@@ -1612,7 +1623,7 @@ class MessageBox(urwid.Pile):
 
         # Transform raw message content into markup (As needed by urwid.Text)
         content, self.message_links, self.time_mentions = self.transform_content(
-            self.message["content"], self.model.server_url
+           self.message["content"], self.model.server_url, self.mido
         )
         self.content.set_text(content)
 
@@ -1695,15 +1706,16 @@ class MessageBox(urwid.Pile):
 
     @classmethod
     def transform_content(
-        cls, content: Any, server_url: str
+        cls, content: Any, server_url: str, mido=0
     ) -> Tuple[
         Tuple[None, Any],
         "OrderedDict[str, Tuple[str, int, bool]]",
         List[Tuple[str, str]],
     ]:
+
         soup = BeautifulSoup(content, "lxml")
         body = soup.find(name="body")
-
+        #if(mid==1506764):
         metadata = dict(
             server_url=server_url,
             message_links=OrderedDict(),
@@ -1713,7 +1725,13 @@ class MessageBox(urwid.Pile):
         if body and body.find(name="blockquote"):
             metadata["bq_len"] = cls.indent_quoted_content(soup, QUOTED_TEXT_MARKER)
 
-        markup, message_links, time_mentions = cls.soup2markup(body, metadata)
+        markup, message_links, time_mentions = cls.soup2markup(body, metadata,mido)
+        # if (mido == 1507482):
+        #     print("soup",soup)
+        #     print("body",body)
+        #     print("markup",markup)
+        #     print("metadat",metadata)
+        #     print("message_links",message_links)
         return (None, markup), message_links, time_mentions
 
     @staticmethod
@@ -1985,7 +2003,11 @@ class MessageBox(urwid.Pile):
                     title=self.message["subject"],
                 )
             msg_id = self.message["id"]
+            print("msg_id",msg_id)
+
+
             response = self.model.fetch_raw_message_content(msg_id)
+            print(response)
             msg = response if response is not None else ""
             write_box = self.model.controller.view.write_box
             write_box.msg_edit_state = _MessageEditState(
