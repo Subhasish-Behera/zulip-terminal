@@ -943,6 +943,8 @@ class MessageBox(urwid.Pile):
     def __init__(self, message: Message, model: "Model", last_message: Any) -> None:
         self.model = model
         self.message = message
+        print("message" , self.message)
+        self.is_alert_word_present: bool = _has_alert_word()
         self.header: List[Any] = []
         self.content: urwid.Text = urwid.Text("")
         self.footer: List[Any] = []
@@ -1005,7 +1007,11 @@ class MessageBox(urwid.Pile):
 
         super().__init__(self.main_view())
 
-    def need_recipient_header(self) -> bool:
+    def has_alert_word(self) -> bool:
+        return 'has_alert_word' in self.message['flags']
+
+
+    def _need_recipient_header(self) -> bool:
         # Prevent redundant information in recipient bar
         if len(self.model.narrow) == 1 and self.model.narrow[0][0] == "pm_with":
             return False

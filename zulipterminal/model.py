@@ -115,7 +115,8 @@ class Model:
             uri=urlparse(self.client.base_url)
         )
         self.server_name = ""
-
+        self.alert_words = self.fetch_alert_words()
+        print(self.alert_words)
         self._notified_user_of_notification_failure = False
 
         # Events fetched once at startup
@@ -136,11 +137,12 @@ class Model:
             # zulip_version and zulip_feature_level are always returned in
             # POST /register from Feature level 3.
             "zulip_version",
+            "alert_words" #added alert_words
         ]
 
         # Events desired with their corresponding callback
         self.event_actions: "OrderedDict[str, Callable[[Event], None]]" = OrderedDict(
-            [
+            [   ("alert_words", self._handle_alert_words_event),
                 ("message", self._handle_message_event),
                 ("update_message", self._handle_update_message_event),
                 ("reaction", self._handle_reaction_event),
@@ -812,6 +814,20 @@ class Model:
                 message["topic_links"] = topic_links
 
         return message
+
+    def fetch_alert_words(self):
+        """
+            Fetches alert words.
+        """
+        print("hou")
+        response = self.client.get_alert_words()
+        if response["result"] == "success":
+            print(response["alert_words"])
+            return response["alert_words"]
+
+        display_error_if_present(response, self.controller)
+
+        return None
 
     def fetch_message_history(
         self, message_id: int
@@ -1555,6 +1571,16 @@ class Model:
                 msg_log.append(msg_w)
 
             self.controller.update_screen()
+    def _handle_alert_words_event(self,event: Event) -> None:
+        """
+        Handle alert_words events
+        """
+        assert event["type"] == "alert_words"
+        self.alert_words = event["alert_words"]
+        print(self.alert_words)
+        print("hii")
+
+
 
     def _update_topic_index(self, stream_id: int, topic_name: str) -> None:
         """
@@ -1918,6 +1944,11 @@ class Model:
                 continue
 
             for event in response["events"]:
+                print(response["events"])
+                print("no1")
+                print(str(event)+"\n")
+                with open('alert_words', 'a') as f:
+                    f.write(str(event) + "\n")
                 last_event_id = max(last_event_id, int(event["id"]))
                 if event["type"] in self.event_actions:
                     try:
