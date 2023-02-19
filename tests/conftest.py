@@ -484,6 +484,11 @@ def stream_msg_template() -> Message:
     return msg_template
 
 
+@pytest.fixture(params=["stream_msg_template"])
+def stream_msg_fixture(request: Any) -> Message:
+    return request.getfixturevalue(request.param)
+
+
 @pytest.fixture
 def extra_stream_msg_template() -> Message:
     msg_template = msg_template_factory(
