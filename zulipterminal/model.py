@@ -1439,7 +1439,7 @@ class Model:
                 ]
                 recipient = ", ".join(extra_targets)
             if not self.user_settings()["pm_content_in_desktop_notifications"]:
-                content = f"New private message from {message['sender_full_name']}"
+                content = f"New private 0000 message from {message['sender_full_name']}"
                 hidden_content = True
         elif message["type"] == "stream":
             stream_id = message["stream_id"]
@@ -1447,7 +1447,11 @@ class Model:
                 set(message["flags"])
             ) or self.is_visual_notifications_enabled(stream_id):
                 recipient = "{display_recipient} -> {subject}".format(**message)
-
+            if "has_alert_word" in message["flags"]:
+                 # Check if stream or topic is muted
+                topic = message.get("subject")
+                if not self.is_muted_stream(stream_id) and not self.is_muted_topic(stream_id, topic):
+                    recipient = "{display_recipient} -> {subject}".format(**message)
         if recipient:
             if hidden_content:
                 text = content
@@ -1468,7 +1472,6 @@ class Model:
 
                     spoiler_tag.unwrap()
                 text = soup.text
-
             return notify(
                 f"{self.server_name}:\n"
                 f"{message['sender_full_name']} (to {recipient})",
