@@ -1449,7 +1449,7 @@ class Model:
                 recipient = "{display_recipient} -> {subject}".format(**message)
             if "has_alert_word" in message["flags"]:
                 # Check if stream or topic is muted
-                topic = message.get("subject")
+                topic  = message.get("subject", "")
                 if not self.is_muted_stream(stream_id) and not self.is_muted_topic(
                     stream_id, topic
                 ):
