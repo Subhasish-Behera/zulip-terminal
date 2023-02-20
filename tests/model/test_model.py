@@ -2057,41 +2057,95 @@ class TestModel:
             "subject",
             "is_stream_muted",
             "is_topic_muted",
-            "no_of_times_notify_call_expected"
+            "no_of_times_notify_call_expected",
         ],
         [
-            (4444,{"flags":["has_alert_word"]},True,{"display_recipient":["test_here"]},{"subject":["k1"]},True,True,1),
-            (4444,{"flags":["has_alert_word"]},False,{"display_recipient":["test_here"]},{"subject":["k1"]},True,True,0),
-             (4444, {"flags": ["has_alert_word"]},False,{"display_recipient":["test_here"]},{"subject":["k1"]}, True, False,0),
-             (4444,{"flags":["has_alert_word"]},False,{"display_recipient":["test_here"]},{"subject":["k1"]},False,False,1),
+            (
+                4444,
+                {"flags": ["has_alert_word"]},
+                True,
+                {"display_recipient": ["test_here"]},
+                {"subject": ["k1"]},
+                True,
+                True,
+                1,
+            ),
+            (
+                4444,
+                {"flags": ["has_alert_word"]},
+                False,
+                {"display_recipient": ["test_here"]},
+                {"subject": ["k1"]},
+                True,
+                True,
+                0,
+            ),
+            (
+                4444,
+                {"flags": ["has_alert_word"]},
+                False,
+                {"display_recipient": ["test_here"]},
+                {"subject": ["k1"]},
+                True,
+                False,
+                0,
+            ),
+            (
+                4444,
+                {"flags": ["has_alert_word"]},
+                False,
+                {"display_recipient": ["test_here"]},
+                {"subject": ["k1"]},
+                False,
+                False,
+                1,
+            ),
         ],
         ids=[
             "visual_notification is on -> no effect due to mute",
             "visual_notification is off, and both topic and stream is muted",
-             "visual_notification is off, only topic is muted",
-              "visual_notification is off, neither topic or stream is muted",
-        ]
+            "visual_notification is off, only topic is muted",
+            "visual_notification is off, neither topic or stream is muted",
+        ],
     )
-    def test_notify_user_with_alert_words(self, mocker, model,stream_msg_fixture,user_id,flags,visual_notification_status,display_recipient,subject,is_stream_muted,is_topic_muted,no_of_times_notify_call_expected):
-            stream_msg_fixture.update(flags)
-            self.controller.notify_enabled = True
-            stream_msg_fixture.update(display_recipient)
-            stream_msg_fixture.update(subject)
-            mocker.patch.object(model, "is_visual_notifications_enabled", return_value=visual_notification_status)
-            mocker.patch.object(model, "is_muted_stream", return_value=is_stream_muted)
-            mocker.patch.object(model, "is_muted_topic", return_value=is_topic_muted)
-            notify = mocker.patch(MODULE + ".notify")
-            # recipient_string = model.notify_user(stream_msg_fixture)
-            # assert recipient_string == expected_recipient_string
-            # notify.assert_called_once_with(mocker.ANY, expected_recipient_string)
-            #  # add this line to see if the notify function is being called
-            notify = mocker.patch(MODULE + ".notify")
-            model.notify_user(stream_msg_fixture)
-            if no_of_times_notify_call_expected == 1:
-                assert notify.called
-            else:
-                assert not notify.called
-            #recipient = notify.call_args[0][0]
+    def test_notify_user_with_alert_words(
+        self,
+        mocker,
+        model,
+        stream_msg_fixture,
+        user_id,
+        flags,
+        visual_notification_status,
+        display_recipient,
+        subject,
+        is_stream_muted,
+        is_topic_muted,
+        no_of_times_notify_call_expected,
+    ):
+        stream_msg_fixture.update(flags)
+        self.controller.notify_enabled = True
+        stream_msg_fixture.update(display_recipient)
+        stream_msg_fixture.update(subject)
+        mocker.patch.object(
+            model,
+            "is_visual_notifications_enabled",
+            return_value=visual_notification_status,
+        )
+        mocker.patch.object(model, "is_muted_stream", return_value=is_stream_muted)
+        mocker.patch.object(model, "is_muted_topic", return_value=is_topic_muted)
+        notify = mocker.patch(MODULE + ".notify")
+        # recipient_string = model.notify_user(stream_msg_fixture)
+        # assert recipient_string == expected_recipient_string
+        # notify.assert_called_once_with(mocker.ANY, expected_recipient_string)
+        #  # add this line to see if the notify function is being called
+        notify = mocker.patch(MODULE + ".notify")
+        model.notify_user(stream_msg_fixture)
+        if no_of_times_notify_call_expected == 1:
+            assert notify.called
+        else:
+            assert not notify.called
+        # recipient = notify.call_args[0][0]
+
     @pytest.mark.parametrize(
         "event, expected_times_messages_rerendered, expected_index, topic_view_enabled",
         [
