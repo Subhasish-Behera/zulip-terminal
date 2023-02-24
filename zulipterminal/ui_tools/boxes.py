@@ -944,7 +944,7 @@ class MessageBox(urwid.Pile):
         self.model = model
         self.message = message
         print("message" , self.message)
-        self.is_alert_word_present: bool = _has_alert_word()
+        self.is_alert_word_present: bool = 'has_alert_word' in self.message['flags']
         self.header: List[Any] = []
         self.content: urwid.Text = urwid.Text("")
         self.footer: List[Any] = []
@@ -958,6 +958,7 @@ class MessageBox(urwid.Pile):
         self.time_mentions: List[Tuple[str, str]] = list()
         self.last_message = last_message
         # if this is the first message
+        self.alerted_words = self.model.alert_words
         if self.last_message is None:
             self.last_message = defaultdict(dict)
 
@@ -1007,9 +1008,9 @@ class MessageBox(urwid.Pile):
 
         super().__init__(self.main_view())
 
-    def has_alert_word(self) -> bool:
-        return 'has_alert_word' in self.message['flags']
+     #'has_alert_word' in self.message['flags']
 
+    #self.is_alert_word_present = _has_alert_word()
 
     def _need_recipient_header(self) -> bool:
         # Prevent redundant information in recipient bar
@@ -1514,6 +1515,9 @@ class MessageBox(urwid.Pile):
 
                 source_text = f"Original text was {tag_text.strip()}"
                 metadata["time_mentions"].append((time_string, source_text))
+            elif tag == "span" and "alert-word" in element.get("class", []):
+                if tag_text:
+                    markup.append(("msg_code", tag_text))
             else:
                 markup.extend(cls.soup2markup(element, metadata)[0])
         return markup, metadata["message_links"], metadata["time_mentions"]
@@ -1618,7 +1622,7 @@ class MessageBox(urwid.Pile):
 
         # Transform raw message content into markup (As needed by urwid.Text)
         content, self.message_links, self.time_mentions = self.transform_content(
-            self.message["content"], self.model.server_url
+            self.message["content"], self.message["flags"],self.alerted_words, self.model.server_url
         )
         self.content.set_text(content)
 
@@ -1699,14 +1703,47 @@ class MessageBox(urwid.Pile):
 
         return author_is_present
 
+    def replace_callback(match, alert_regex_replacements):
+        before = match.group(1)
+        word = match.group(2)
+        after = match.group(3)
+        offset = match.start()
+        content = match.string
+        pre_match = content[:offset]
+        check_string = pre_match + match.group()[:-1]
+        in_tag = check_string.rfind("<") > check_string.rfind(">")
+        if in_tag:
+            return before + word + after
+        return before + "<span class='alert-word'>" + word + "</span>" + after
+    def transform_content_alert_words(self,content,alerted_list):
+        alert_regex_replacements = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            # Accept quotes with or without HTML escaping
+            '"': r'(?:\"|&quot;)',
+            "'": r"(?:\'|&#39;)",
+        }
+        for word in alerted_list:
+            clean = re.escape(word).replace('[' + ''.join(alert_regex_replacements.keys()) + ']',
+                                            lambda c: alert_regex_replacements[c.group(0)])
+
+        before_punctuation = r"\s|^|[\\(\".,';\[]"
+        after_punctuation = r"(?=\s)|$|[\\)\"?!:.,';\]!]"
+        regex = re.compile(f'({before_punctuation})({clean})({after_punctuation})', re.I | re.M)
+        content = regex.sub(lambda match: replace_callback(match, alert_regex_replacements),content)
+        return content
+
     @classmethod
     def transform_content(
-        cls, content: Any, server_url: str
+        cls, content: Any,flags: Any,server_url: str,alerted_words=None
     ) -> Tuple[
         Tuple[None, Any],
         "OrderedDict[str, Tuple[str, int, bool]]",
         List[Tuple[str, str]],
     ]:
+        if 'has_alert_word' in flags:
+           transform_content_alert_words(content,alerted_words)
         soup = BeautifulSoup(content, "lxml")
         body = soup.find(name="body")
 
