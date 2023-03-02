@@ -227,6 +227,7 @@ class TestModel:
         model = Model(self.controller)
 
         event_types = [
+            "alert_words",
             "message",
             "update_message",
             "reaction",
@@ -254,6 +255,7 @@ class TestModel:
             "user_settings",
             "realm_emoji",
             "zulip_version",
+            "alert_words",
         ]
         model.client.register.assert_called_once_with(
             event_types=event_types,
