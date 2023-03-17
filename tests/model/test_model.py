@@ -2130,7 +2130,8 @@ class TestModel:
                     "topic_msg_ids": {
                         10: {"new subject": {1}, "old subject": {2}},
                     },
-                    "edited_messages": {1},
+                    "edited_messages": set(),
+                    "moved_messages": {1},
                     "topics": {10: []},
                 },
                 False,
@@ -2163,7 +2164,8 @@ class TestModel:
                     "topic_msg_ids": {
                         10: {"new subject": {1, 2}, "old subject": set()},
                     },
-                    "edited_messages": {1},
+                    "edited_messages": set(),
+                    "moved_messages": {1},
                     "topics": {10: []},
                 },
                 False,
@@ -2195,6 +2197,7 @@ class TestModel:
                         10: {"new subject": set(), "old subject": {1, 2}},
                     },
                     "edited_messages": {1},
+                    "moved_messages": set(),
                     "topics": {10: ["new subject", "old subject"]},
                 },
                 False,
@@ -2228,7 +2231,8 @@ class TestModel:
                     "topic_msg_ids": {
                         10: {"new subject": {1}, "old subject": {2}},
                     },
-                    "edited_messages": {1},
+                    "edited_messages": set(),
+                    "moved_messages": {1},
                     "topics": {10: []},
                 },
                 False,
@@ -2259,6 +2263,7 @@ class TestModel:
                         10: {"new subject": set(), "old subject": {1, 2}},
                     },
                     "edited_messages": {1},
+                    "moved_messages": set(),
                     "topics": {10: ["new subject", "old subject"]},
                 },
                 False,
@@ -2293,6 +2298,7 @@ class TestModel:
                         10: {"new subject": {3}, "old subject": {1, 2}},
                     },
                     "edited_messages": set(),
+                    "moved_messages": set(),
                     "topics": {10: []},  # This resets the cache
                 },
                 False,
@@ -2327,6 +2333,7 @@ class TestModel:
                         10: {"new subject": {3}, "old subject": {1, 2}},
                     },
                     "edited_messages": set(),
+                    "moved_messages": set(),
                     "topics": {10: ["new subject", "old subject"]},
                 },
                 True,
@@ -2360,7 +2367,8 @@ class TestModel:
                     "topic_msg_ids": {
                         10: {"new subject": {1}, "old subject": {2}},
                     },
-                    "edited_messages": {1},
+                    "edited_messages": set(),
+                    "moved_messages": {1},
                     "topics": {10: ["new subject", "old subject"]},
                 },
                 True,
@@ -2393,6 +2401,7 @@ class TestModel:
                 10: {"new subject": set(), "old subject": {1, 2}},
             },
             "edited_messages": set(),
+            "moved_messages": set(),
             "topics": {10: ["new subject", "old subject"]},
         }
         mocker.patch(MODEL + "._update_rendered_view")

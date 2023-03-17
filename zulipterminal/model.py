@@ -66,6 +66,8 @@ from zulipterminal.platform_code import notify
 from zulipterminal.ui_tools.utils import create_msg_box_list
 
 
+RESOLVED_TOPIC_PREFIX = "✔ "
+
 OFFLINE_THRESHOLD_SECS = 140
 
 # Adapted from zerver/models.py
@@ -1591,7 +1593,31 @@ class Model:
         indexed_message = self.index["messages"].get(message_id, None)
 
         if indexed_message:
-            self.index["edited_messages"].add(message_id)
+            if "orig_content" in event:
+                self.index["edited_messages"].add(message_id)
+            if "prev_stream" in event:
+                self.index["moved_messages"].add(message_id)
+            if "subject" in event:
+                if not event["subject"].startswith(RESOLVED_TOPIC_PREFIX):
+                    if (
+                        event["orig_subject"].startswith(RESOLVED_TOPIC_PREFIX)
+                        and event["orig_subject"][2:] != event["subject"]
+                    ):
+                        self.index["moved_messages"].add(message_id)
+                    if not event["orig_subject"].startswith(
+                        RESOLVED_TOPIC_PREFIX
+                    ) and not event["subject"].startswith(RESOLVED_TOPIC_PREFIX):
+                        self.index["moved_messages"].add(message_id)
+                else:
+                    if (
+                        event["orig_subject"].startswith(RESOLVED_TOPIC_PREFIX)
+                        and event["orig_subject"][2:] != event["subject"][2:]
+                    ):
+                        self.index["moved_messages"].add(message_id)
+            else:
+                self.index["edited_messages"].add(message_id)
+            if message_id not in self.index["moved_messages"]:
+                self.index["edited_messages"].add(message_id)
 
         # Update the rendered content, if the message is indexed
         if "rendered_content" in event and indexed_message:
