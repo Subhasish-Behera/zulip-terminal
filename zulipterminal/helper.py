@@ -47,6 +47,9 @@ from zulipterminal.platform_code import (
 )
 
 
+RESOLVED_TOPIC_PREFIX = "✔ "
+
+
 class StreamData(TypedDict):
     name: str
     id: int
@@ -90,6 +93,7 @@ class Index(TypedDict):
     topic_msg_ids: Dict[int, Dict[str, Set[int]]]
     # Extra cached information
     edited_messages: Set[int]  # {message_id, ...}
+    moved_messages: Set[int]
     topics: Dict[int, List[str]]  # {topic names, ...}
     search: Set[int]  # {message_id, ...}
     # Downloaded message data by message id
@@ -106,6 +110,7 @@ initial_index = Index(
     stream_msg_ids_by_stream_id=defaultdict(set),
     topic_msg_ids=defaultdict(dict),
     edited_messages=set(),
+    moved_messages=set(),
     topics=defaultdict(list),
     search=set(),
     # mypy bug: https://github.com/python/mypy/issues/7217
@@ -399,8 +404,44 @@ def index_messages(messages: List[Message], model: Any, index: Index) -> Index:
     narrow = model.narrow
     for msg in messages:
         if "edit_history" in msg:
-            index["edited_messages"].add(msg["id"])
-
+            for edit_history_event in msg["edit_history"]:
+                if "prev_content" in edit_history_event:
+                    index["edited_messages"].add(msg["id"])
+                if "prev_stream" in edit_history_event:
+                    index["moved_messages"].add(msg["id"])
+                if "prev_topic" in edit_history_event:
+                    # We know it has a topic edit. Now we need to determine if
+                    # it was a true move or a resolve/unresolve.
+                    if not edit_history_event["topic"].startswith(
+                        RESOLVED_TOPIC_PREFIX
+                    ):
+                        if (
+                            edit_history_event["prev_topic"].startswith(
+                                RESOLVED_TOPIC_PREFIX
+                            )
+                            and edit_history_event["prev_topic"][2:]
+                            != edit_history_event["topic"]
+                        ):
+                            index["moved_messages"].add(msg["id"])
+                        if not edit_history_event["prev_topic"].startswith(
+                            RESOLVED_TOPIC_PREFIX
+                        ) and not edit_history_event["topic"].startswith(
+                            RESOLVED_TOPIC_PREFIX
+                        ):
+                            index["moved_messages"].add(msg["id"])
+                    else:
+                        if (
+                            edit_history_event["prev_topic"].startswith(
+                                RESOLVED_TOPIC_PREFIX
+                            )
+                            and edit_history_event["prev_topic"][2:]
+                            != edit_history_event["topic"][2:]
+                        ):
+                            index["moved_messages"].add(msg["id"])
+                else:
+                    index["edited_messages"].add(msg["id"])
+            if msg["id"] not in index["moved_messages"]:
+                index["edited_messages"].add(msg["id"])
         index["messages"][msg["id"]] = msg
         if not narrow:
             index["all_msg_ids"].add(msg["id"])
