@@ -632,7 +632,7 @@ class MessageBox(urwid.Pile):
         else:
             recipient_header = None
 
-        self.alerted_words : Optional[Any] = self.model.get_alert_words()
+        self.alerted_words: Optional[Any] = self.model.get_alert_words()
 
         # Content Header
         message = {

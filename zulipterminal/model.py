@@ -183,7 +183,7 @@ class Model:
 
         self._subscribe_to_streams(self.initial_data["subscriptions"])
 
-        self._alert_word = self.initial_data["alert_words"]
+        self._alert_word = self.initial_data.get("alert_words",None)
 
         # NOTE: The date_created field of stream has been added in feature
         # level 30, server version 4. For consistency we add this field
