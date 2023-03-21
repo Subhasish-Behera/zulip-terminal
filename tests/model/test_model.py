@@ -227,6 +227,7 @@ class TestModel:
         model = Model(self.controller)
 
         event_types = [
+            "alert_words",
             "message",
             "update_message",
             "reaction",

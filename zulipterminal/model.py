@@ -1562,6 +1562,13 @@ class Model:
 
             self.controller.update_screen()
 
+    def _handle_alert_words_event(self, event: Event) -> None:
+        """
+        Handle alert_words events
+        """
+        assert event["type"] == "alert_words"
+        self._alert_words = event["alert_words"]
+
     def _update_topic_index(self, stream_id: int, topic_name: str) -> None:
         """
         Update topic order in index based on incoming message.
