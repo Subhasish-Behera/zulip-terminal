@@ -138,10 +138,9 @@ class Model:
             # zulip_version and zulip_feature_level are always returned in
             # POST /register from Feature level 3.
             "zulip_version",
-            "alert_words",  # added alert_words
+            "alert_words",
         ]
 
-        self.alert_words = self.fetch_alert_words()
 
         # Events desired with their corresponding callback
         self.event_actions: "OrderedDict[str, Callable[[Event], None]]" = OrderedDict(
@@ -175,7 +174,6 @@ class Model:
 
         self.server_version = self.initial_data["zulip_version"]
         self.server_feature_level = self.initial_data.get("zulip_feature_level")
-
         self.users = self.get_all_users()
 
         self.stream_dict: Dict[int, Any] = {}
@@ -185,6 +183,8 @@ class Model:
         self.visual_notified_streams: Set[int] = set()
 
         self._subscribe_to_streams(self.initial_data["subscriptions"])
+
+        self._alert_words = self.initial_data.get('alert_words')
 
         # NOTE: The date_created field of stream has been added in feature
         # level 30, server version 4. For consistency we add this field
@@ -342,7 +342,8 @@ class Model:
     def set_search_narrow(self, search_query: str) -> None:
         self.unset_search_narrow()
         self.narrow.append(["search", search_query])
-
+    def get_alert_words(self):
+        return self._alert_words
     def unset_search_narrow(self) -> None:
         # If current narrow is a result of a previous started search,
         # we pop the ['search', 'text'] term in the narrow, before
@@ -825,17 +826,17 @@ class Model:
 
         return message
 
-    def fetch_alert_words(self) -> List[str]:
-        """
-        Fetches alert words.
-        """
-        response = self.client.get_alert_words()
-        if response["result"] == "success":
-            return response["alert_words"]
-        if response["result"] == "error":
-            display_error_if_present(response, self.controller)
-
-        return list()
+    # def fetch_alert_words(self) -> List[str]:
+    #     """
+    #     Fetches alert words.
+    #     """
+    #     response = self.client.get_alert_words()
+    #     if response["result"] == "success":
+    #         return response["alert_words"]
+    #     if response["result"] == "error":
+    #         display_error_if_present(response, self.controller)
+    #
+    #     return list()
 
     def fetch_message_history(
         self, message_id: int
@@ -944,6 +945,7 @@ class Model:
             name: self.exception_safe_result(future) for name, future in futures.items()
         }
         if not any(results.values()):
+            print(self.initial_data.keys())
             self.user_id = self.initial_data["user_id"]
             self.user_email = self.initial_data["email"]
             self.user_full_name = self.initial_data["full_name"]
@@ -1582,7 +1584,7 @@ class Model:
         Handle alert_words events
         """
         assert event["type"] == "alert_words"
-        self.alert_words = event["alert_words"]
+        self._alert_words = event["alert_words"]
 
     def _update_topic_index(self, stream_id: int, topic_name: str) -> None:
         """
