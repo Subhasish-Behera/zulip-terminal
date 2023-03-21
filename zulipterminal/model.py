@@ -141,7 +141,6 @@ class Model:
             "alert_words",
         ]
 
-
         # Events desired with their corresponding callback
         self.event_actions: "OrderedDict[str, Callable[[Event], None]]" = OrderedDict(
             [
@@ -184,7 +183,7 @@ class Model:
 
         self._subscribe_to_streams(self.initial_data["subscriptions"])
 
-        self._alert_words = self.initial_data.get('alert_words')
+        self._alert_word = self.initial_data["alert_words"]
 
         # NOTE: The date_created field of stream has been added in feature
         # level 30, server version 4. For consistency we add this field
@@ -342,8 +341,10 @@ class Model:
     def set_search_narrow(self, search_query: str) -> None:
         self.unset_search_narrow()
         self.narrow.append(["search", search_query])
-    def get_alert_words(self):
+
+    def get_alert_words(self) -> List[str]:
         return self._alert_words
+
     def unset_search_narrow(self) -> None:
         # If current narrow is a result of a previous started search,
         # we pop the ['search', 'text'] term in the narrow, before
@@ -945,7 +946,6 @@ class Model:
             name: self.exception_safe_result(future) for name, future in futures.items()
         }
         if not any(results.values()):
-            print(self.initial_data.keys())
             self.user_id = self.initial_data["user_id"]
             self.user_email = self.initial_data["email"]
             self.user_full_name = self.initial_data["full_name"]

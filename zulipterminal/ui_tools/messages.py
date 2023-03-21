@@ -632,7 +632,7 @@ class MessageBox(urwid.Pile):
         else:
             recipient_header = None
 
-        self.alerted_words = self.model.get_alert_words()
+        self.alerted_words : Optional[Any] = self.model.get_alert_words()
 
         # Content Header
         message = {
@@ -807,6 +807,7 @@ class MessageBox(urwid.Pile):
 
         return author_is_present
 
+    @staticmethod
     def transform_content_alert_words(content: str, alerted_list: List[str]) -> Any:
         alert_regex_replacements = {
             "&": "&amp;",
