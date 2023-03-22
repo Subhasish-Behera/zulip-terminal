@@ -2,7 +2,7 @@ import os
 import webbrowser
 from platform import platform
 from threading import Thread, Timer
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, List, Optional, Set, Tuple
 
 import pyperclip
 import pytest
@@ -551,22 +551,22 @@ class TestController:
     @pytest.mark.parametrize(
         "active_conversation_info",
         [
-            case({"sender_name": "hamlet"}, id="in_pm_narrow_with_sender_typing:start"),
-            case({}, id="in_pm_narrow_with_sender_typing:stop"),
+            case({"hamlet"}, id="in_pm_narrow_with_sender_typing:start"),
+            case(set(), id="in_pm_narrow_with_sender_typing:stop"),
         ],
     )
     def test_show_typing_notification(
         self,
         mocker: MockerFixture,
         controller: Controller,
-        active_conversation_info: Dict[str, str],
+        active_conversation_info: Set[Any],
     ) -> None:
         set_footer_text = mocker.patch(VIEW + ".set_footer_text")
         mocker.patch(MODULE + ".time.sleep")
         controller.active_conversation_info = active_conversation_info
 
         def mock_typing() -> None:
-            controller.active_conversation_info = {}
+            controller.active_conversation_info = set()
 
         Timer(0.1, mock_typing).start()
         Thread(controller.show_typing_notification()).start()
@@ -584,4 +584,4 @@ class TestController:
         else:
             set_footer_text.assert_called_once_with()
         assert controller.is_typing_notification_in_progress is False
-        assert controller.active_conversation_info == {}
+        assert controller.active_conversation_info == set()
