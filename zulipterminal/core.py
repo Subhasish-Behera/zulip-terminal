@@ -433,7 +433,7 @@ class Controller:
     def show_typing_notification(self) -> None:
         self.is_typing_notification_in_progress = True
         dots = itertools.cycle(["", ".", "..", "..."])
-
+        self.active_conversation_info = [self.model.user_dict[x]["full_name"] for x in self.active_conversation_info]
         # Until conversation becomes "inactive" like when a `stop` event is sent
         while self.active_conversation_info:
             active_conversation_info = ", ".join(
