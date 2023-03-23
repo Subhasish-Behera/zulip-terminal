@@ -297,13 +297,15 @@ class Model:
         starred: bool = False,
         mentioned: bool = False,
     ) -> bool:
+        print("hii")
         selected_params = {k for k, v in locals().items() if k != "self" and v}
+        print("selected_params",selected_params)
         valid_narrows: Dict[FrozenSet[str], List[Any]] = {
             frozenset(): [],
             frozenset(["stream"]): [["stream", stream]],
             frozenset(["stream", "topic"]): [["stream", stream], ["topic", topic]],
             frozenset(["pms"]): [["is", "private"]],
-            frozenset(["pm_with"]): [["pm_with", pm_with]],
+            frozenset(["pm_with"]): [["pm-with", pm_with]],
             frozenset(["starred"]): [["is", "starred"]],
             frozenset(["mentioned"]): [["is", "mentioned"]],
         }
@@ -317,7 +319,7 @@ class Model:
         if new_narrow != self.narrow:
             self.narrow = new_narrow
 
-            if pm_with is not None and new_narrow[0][0] == "pm_with":
+            if pm_with is not None and new_narrow[0][0] == "pm-with":
                 users = pm_with.split(", ")
                 self.recipients = frozenset(
                     [self.user_dict[user]["user_id"] for user in users] + [self.user_id]
@@ -349,6 +351,7 @@ class Model:
     def get_message_ids_in_current_narrow(self) -> Set[int]:
         narrow = self.narrow
         index = self.index
+        print(narrow)
         if narrow == []:
             ids = index["all_msg_ids"]
         elif self.is_search_narrow():  # Check searches first
@@ -363,7 +366,8 @@ class Model:
                 ids = index["topic_msg_ids"][stream_id].get(topic, set())
         elif narrow[0][1] == "private":
             ids = index["private_msg_ids"]
-        elif narrow[0][0] == "pm_with":
+        elif narrow[0][0] == "pm-with":
+            print("p1")
             recipients = self.recipients
             ids = index["private_msg_ids_by_user_ids"].get(recipients, set())
         elif narrow[0][1] == "starred":
@@ -403,7 +407,7 @@ class Model:
             )
             # PM-with
             or (
-                self.narrow[0][0] == "pm_with"
+                self.narrow[0][0] == "pm-with"
                 and message["type"] == "private"
                 and len(self.narrow) == 1
                 and self.recipients
@@ -1387,7 +1391,7 @@ class Model:
         # and the person typing isn't the user themselves
         if (
             len(narrow) == 1
-            and narrow[0][0] == "pm_with"
+            and narrow[0][0] == "pm-with"
             and sender_email in narrow[0][1].split(",")
             and sender_id != self.user_id
         ):
