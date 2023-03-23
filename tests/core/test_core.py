@@ -228,7 +228,7 @@ class TestController:
 
         controller.narrow_to_user(recipient_emails=emails)
 
-        assert controller.model.narrow == [["pm_with", user_email]]
+        assert controller.model.narrow == [["pm-with", user_email]]
         controller.view.message_view.log.clear.assert_called_once_with()
         recipients = frozenset([controller.model.user_id, user_id])
         assert controller.model.recipients == recipients
