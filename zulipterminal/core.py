@@ -439,22 +439,62 @@ class Controller:
             active_conversation_info = ", ".join(
                 map(lambda x: self.model.user_dict[x]["full_name"], self.active_conversation_info)
             )
+            active_users_text = "footer_contrast {} "
             no_of_typing_users = len(self.active_conversation_info)
+            # if no_of_typing_users == 1:
+            #     # typing_text = [
+            #     #     ("footer_contrast", " " + active_conversation_info + " "),
+            #     #     " is typing" + next(dots),
+            #     # ]
+            #     typing_text = [
+            #         active_conversation_info,
+            #         " is typing",
+            #     ]
+            #     print("00")
+            #     print(typing_text)
+            #     print(type(typing_text))
+            #     print(typing_text[0])
+            #     print(type(typing_text))
+            # elif no_of_typing_users < 4:
+            #     # typing_text = [
+            #     #     ("footer_contrast", " " + active_conversation_info + " "),
+            #     #     " are typing" + next(dots),
+            #     # ]
+            #     typing_text = [
+            #         active_conversation_info,
+            #         " are typing",
+            #     ]
+            #     print("00")
+            #     print(typing_text)
+            #     print(type(typing_text))
+            #     print(typing_text[0])
+            #     print(type(typing_text))
+            # else:
+            #     # typing_text = [
+            #     #     ("footer_contrast", "Multiple people are" + " "),
+            #     #     " are typing" + next(dots),
+            #     # ]
+            #     typing_text = [
+            #         ("Multiple people are"),
+            #         " are typing",
+            #     ]
+            #     print("00")
+            #     print(typing_text)
+            #     print(type(typing_text))
+            #     print(typing_text[0])
+            #     print(type(typing_text))
+            # typing_text[0].insert(0,'footer_contrast')
+            # print(typing_text)
+            # typing_text[1]+next(dots)
+            # print(typing_text)
             if no_of_typing_users == 1:
-                typing_text = [
-                    ("footer_contrast", " " + active_conversation_info + " "),
-                    " is typing" + next(dots),
-                ]
+                active_conversation_info = f"{active_conversation_info} is typing"
             elif no_of_typing_users < 4:
-                typing_text = [
-                    ("footer_contrast", " " + active_conversation_info + " "),
-                    " are typing" + next(dots),
-                ]
+                active_conversation_info = f"{active_conversation_info} are typing"
             else:
-                typing_text = [
-                    ("footer_contrast", "Multiple people are" + " "),
-                    " are typing" + next(dots),
-                ]
+                active_conversation_info = "Multiple people are typing"
+            typing_text = [("footer_contrast",active_conversation_info)]
+            typing_text.append(next(dots))
             self.view.set_footer_text(typing_text)
             time.sleep(0.45)
 
