@@ -1391,18 +1391,15 @@ class Model:
             and sender_email in [email.strip() for email in narrow[0][1].split(",")]
             and sender_id != self.user_id
         ):
-            print("opopopo")
             if event["op"] == "start":
                 sender_email = self.user_dict[sender_email]["email"]
                 active_conversation_info.add(sender_email)
-                print("opopopos")
                 if not controller.is_typing_notification_in_progress:
                     controller.show_typing_notification()
 
             elif event["op"] == "stop":
                 sender_email = self.user_dict[sender_email]["email"]
                 active_conversation_info.discard(sender_email)
-                print("opopoposr")
             else:
                 raise RuntimeError("Unknown typing event operation")
 
