@@ -298,7 +298,6 @@ class Model:
         mentioned: bool = False,
     ) -> bool:
         selected_params = {k for k, v in locals().items() if k != "self" and v}
-        print("hii",selected_params)
         valid_narrows: Dict[FrozenSet[str], List[Any]] = {
             frozenset(): [],
             frozenset(["stream"]): [["stream", stream]],
@@ -308,12 +307,9 @@ class Model:
             frozenset(["starred"]): [["is", "starred"]],
             frozenset(["mentioned"]): [["is", "mentioned"]],
         }
-        print("hii2",valid_narrows)
         for narrow_param, narrow in valid_narrows.items():
-            print(narrow_param)
             if narrow_param == selected_params:
                 new_narrow = narrow
-                print("hiir")
                 break
         else:
             raise RuntimeError("Model.set_narrow parameters used incorrectly.")
