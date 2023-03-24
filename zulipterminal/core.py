@@ -437,7 +437,7 @@ class Controller:
         # Until conversation becomes "inactive" like when a `stop` event is sent
         while self.active_conversation_info:
             active_conversation_info = ", ".join(
-                map(lambda x: self.model.user_dict[x]["full_name"], self.active_conversation_info)
+                self.model.user_dict[x]["full_name"] for x in self.active_conversation_info
             )
             no_of_typing_users = len(self.active_conversation_info)
             # if no_of_typing_users == 1:
