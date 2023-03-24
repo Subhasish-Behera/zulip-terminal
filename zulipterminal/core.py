@@ -439,7 +439,6 @@ class Controller:
             active_conversation_info = ", ".join(
                 map(lambda x: self.model.user_dict[x]["full_name"], self.active_conversation_info)
             )
-            active_users_text = "footer_contrast {} "
             no_of_typing_users = len(self.active_conversation_info)
             # if no_of_typing_users == 1:
             #     # typing_text = [
@@ -488,13 +487,14 @@ class Controller:
             # typing_text[1]+next(dots)
             # print(typing_text)
             if no_of_typing_users == 1:
-                active_conversation_info = f"{active_conversation_info} is typing"
+                typing_phrase = " is typing"
             elif no_of_typing_users < 4:
-                active_conversation_info = f"{active_conversation_info} are typing"
+                typing_phrase = " are typing"
             else:
-                active_conversation_info = "Multiple people are typing"
-            typing_text = [("footer_contrast",active_conversation_info)]
-            typing_text.append(next(dots))
+                active_conversation_info = "Multiple people"
+                typing_phrase = " are typing"
+            typing_text = [("footer_contrast",active_conversation_info+" ")]
+            typing_text.append(typing_phrase+next(dots))
             self.view.set_footer_text(typing_text)
             time.sleep(0.45)
 
