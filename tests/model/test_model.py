@@ -2931,7 +2931,7 @@ class TestModel:
                     "id": 0,
                 },
                 False,
-                {"sender_name": "hamlet"},
+                {"hamlet@zulip.com"},
                 True,
                 id="in_pm_narrow_with_sender_typing:start",
             ),
@@ -2947,7 +2947,7 @@ class TestModel:
                     "id": 0,
                 },
                 True,
-                {"sender_name": "hamlet"},
+                {"hamlet@zulip.com"},
                 False,
                 id="in_pm_narrow_with_sender_typing:start_while_animation_in_progress",
             ),
@@ -3040,9 +3040,11 @@ class TestModel:
         event["type"] = "typing"
 
         model.narrow = narrow
-        model.user_dict = {"hamlet@zulip.com": {"full_name": "hamlet"}}
+        model.user_dict = {
+            "hamlet@zulip.com": {"full_name": "hamlet", "email": "hamlet@zulip.com"}
+        }
         model.user_id = 5  # Iago's user_id
-        model.controller.active_conversation_info = {}
+        model.controller.active_conversation_info = set()
         model.controller.is_typing_notification_in_progress = (
             is_notification_in_progress
         )
@@ -3054,8 +3056,8 @@ class TestModel:
 
         if expected_active_conversation_info:
             assert (
-                model.controller.active_conversation_info["sender_name"]
-                == expected_active_conversation_info["sender_name"]
+                model.controller.active_conversation_info
+                == expected_active_conversation_info
             )
         assert show_typing_notification.called == expected_show_typing_notification
 

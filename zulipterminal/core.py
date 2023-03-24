@@ -12,7 +12,7 @@ from collections import OrderedDict
 from functools import partial
 from platform import platform
 from types import TracebackType
-from typing import Any, Dict, List, Optional, Tuple, Type, Union
+from typing import Any, List, Optional, Set, Tuple, Type, Union
 
 import pyperclip
 import urwid
@@ -83,7 +83,7 @@ class Controller:
 
         self._editor: Optional[Any] = None
 
-        self.active_conversation_info: Dict[str, Any] = {}
+        self.active_conversation_info: Set[str] = set()
         self.is_typing_notification_in_progress = False
 
         self.show_loading()
@@ -436,10 +436,13 @@ class Controller:
 
         # Until conversation becomes "inactive" like when a `stop` event is sent
         while self.active_conversation_info:
-            sender_name = self.active_conversation_info["sender_name"]
+            active_conversation_full_name = ", ".join(
+                self.model.user_dict[x]["full_name"]
+                for x in self.active_conversation_info
+            )
             self.view.set_footer_text(
                 [
-                    ("footer_contrast", " " + sender_name + " "),
+                    ("footer_contrast", " " + active_conversation_full_name + " "),
                     " is typing" + next(dots),
                 ]
             )
