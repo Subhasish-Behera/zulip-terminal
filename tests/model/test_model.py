@@ -3025,6 +3025,19 @@ class TestModel:
                 False,
                 id="in_pm_narrow_with_oneself:stop",
             ),
+            case(
+                [["pm-with", "hamlet@zulip.com","macbeth@zulip.com"]],
+                {
+                    "op": "stary",
+                    "sender": {"user_id": 5, "email": "hamlet@zulip.com"},
+                    "recipients": [{"user_id": 5, "email": "iago@zulip.com"},{"user_id": 7, "email": "macbeth@zulip.com"}],
+                    "id": 0,
+                },
+                False,
+                {"hamlet"},
+                True,
+                id="in_pm_narrow_with_others:stop",
+            ),
         ],
     )
     def test__handle_typing_event(
