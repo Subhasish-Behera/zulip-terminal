@@ -42,7 +42,7 @@ from zulipterminal.api_types import (
     Subscription,
 )
 from zulipterminal.config.keys import primary_key_for_command
-from zulipterminal.config.symbols import STREAM_TOPIC_SEPARATOR
+from zulipterminal.config.symbols import CHECK_MARK,STREAM_TOPIC_SEPARATOR
 from zulipterminal.config.ui_mappings import (
     EDIT_TOPIC_POLICY,
     ROLE_BY_ID,
@@ -1591,26 +1591,26 @@ class Model:
         #       they are not all marked as edited, as per server optimization
         message_id = event["message_id"]
         indexed_message = self.index["messages"].get(message_id, None)
-
+        resolved_topic_prefix = CHECK_MARK + " "
         if indexed_message:
             if "orig_content" in event:
                 self.index["edited_messages"].add(message_id)
             if "prev_stream" in event:
                 self.index["moved_messages"].add(message_id)
             if "subject" in event:
-                if not event["subject"].startswith(RESOLVED_TOPIC_PREFIX):
+                if not event["subject"].startswith(resolved_topic_prefix):
                     if (
-                        event["orig_subject"].startswith(RESOLVED_TOPIC_PREFIX)
+                        event["orig_subject"].startswith(resolved_topic_prefix)
                         and event["orig_subject"][2:] != event["subject"]
                     ):
                         self.index["moved_messages"].add(message_id)
                     if not event["orig_subject"].startswith(
-                        RESOLVED_TOPIC_PREFIX
-                    ) and not event["subject"].startswith(RESOLVED_TOPIC_PREFIX):
+                        resolved_topic_prefix
+                    ) and not event["subject"].startswith(resolved_topic_prefix):
                         self.index["moved_messages"].add(message_id)
                 else:
                     if (
-                        event["orig_subject"].startswith(RESOLVED_TOPIC_PREFIX)
+                        event["orig_subject"].startswith(resolved_topic_prefix)
                         and event["orig_subject"][2:] != event["subject"][2:]
                     ):
                         self.index["moved_messages"].add(message_id)

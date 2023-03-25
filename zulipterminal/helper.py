@@ -34,18 +34,19 @@ from typing_extensions import ParamSpec, TypedDict
 
 from zulipterminal.api_types import Composition, EmojiType, Message
 from zulipterminal.config.keys import primary_key_for_command
-from zulipterminal.config.symbol import CHECK_MARK
 from zulipterminal.config.regexes import (
     REGEX_COLOR_3_DIGIT,
     REGEX_COLOR_6_DIGIT,
     REGEX_QUOTED_FENCE_LENGTH,
 )
+from zulipterminal.config.symbols import CHECK_MARK
 from zulipterminal.config.ui_mappings import StreamAccessType
 from zulipterminal.platform_code import (
     PLATFORM,
     normalized_file_path,
     successful_GUI_return_code,
 )
+
 
 class StreamData(TypedDict):
     name: str
@@ -399,10 +400,9 @@ def index_messages(messages: List[Message], model: Any, index: Index) -> Index:
     }
     """
     narrow = model.narrow
-    RESOLVED_TOPIC_PREFIX = CHECK_MARK + " "
+    resolved_topic_prefix = CHECK_MARK + " "
     for msg in messages:
         if "edit_history" in msg:
-            RESOLVED_TOPIC_PREFIX
             for edit_history_event in msg["edit_history"]:
                 if "prev_content" in edit_history_event:
                     index["edited_messages"].add(msg["id"])
@@ -412,26 +412,26 @@ def index_messages(messages: List[Message], model: Any, index: Index) -> Index:
                     # We know it has a topic edit. Now we need to determine if
                     # it was a true move or a resolve/unresolve.
                     if not edit_history_event["topic"].startswith(
-                        RESOLVED_TOPIC_PREFIX
+                        resolved_topic_prefix
                     ):
                         if (
                             edit_history_event["prev_topic"].startswith(
-                                RESOLVED_TOPIC_PREFIX
+                                resolved_topic_prefix
                             )
                             and edit_history_event["prev_topic"][2:]
                             != edit_history_event["topic"]
                         ):
                             index["moved_messages"].add(msg["id"])
                         if not edit_history_event["prev_topic"].startswith(
-                            RESOLVED_TOPIC_PREFIX
+                            resolved_topic_prefix
                         ) and not edit_history_event["topic"].startswith(
-                            RESOLVED_TOPIC_PREFIX
+                            resolved_topic_prefix
                         ):
                             index["moved_messages"].add(msg["id"])
                     else:
                         if (
                             edit_history_event["prev_topic"].startswith(
-                                RESOLVED_TOPIC_PREFIX
+                                resolved_topic_prefix
                             )
                             and edit_history_event["prev_topic"][2:]
                             != edit_history_event["topic"][2:]
