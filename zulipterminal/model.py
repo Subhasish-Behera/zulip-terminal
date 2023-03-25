@@ -42,7 +42,7 @@ from zulipterminal.api_types import (
     Subscription,
 )
 from zulipterminal.config.keys import primary_key_for_command
-from zulipterminal.config.symbols import CHECK_MARK,STREAM_TOPIC_SEPARATOR
+from zulipterminal.config.symbols import CHECK_MARK, STREAM_TOPIC_SEPARATOR
 from zulipterminal.config.ui_mappings import (
     EDIT_TOPIC_POLICY,
     ROLE_BY_ID,
@@ -65,8 +65,6 @@ from zulipterminal.helper import (
 from zulipterminal.platform_code import notify
 from zulipterminal.ui_tools.utils import create_msg_box_list
 
-
-RESOLVED_TOPIC_PREFIX = "✔ "
 
 OFFLINE_THRESHOLD_SECS = 140
 
