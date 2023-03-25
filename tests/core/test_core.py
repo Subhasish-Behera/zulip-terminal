@@ -574,10 +574,10 @@ class TestController:
         if active_conversation_info:
             set_footer_text.assert_has_calls(
                 [
-                    mocker.call([("footer_contrast", " hamlet "), " is typing"]),
-                    mocker.call([("footer_contrast", " hamlet "), " is typing."]),
-                    mocker.call([("footer_contrast", " hamlet "), " is typing.."]),
-                    mocker.call([("footer_contrast", " hamlet "), " is typing..."]),
+                    mocker.call([("footer_contrast", "hamlet "), ("footer"," is typing")]),
+                    mocker.call([("footer_contrast", "hamlet "), ("footer"," is typing.")]),
+                    mocker.call([("footer_contrast", "hamlet "), ("footer"," is typing..")]),
+                    mocker.call([("footer_contrast", "hamlet "), ("footer"," is typing...")]),
                 ]
             )
             set_footer_text.assert_called_with()

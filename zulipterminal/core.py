@@ -495,8 +495,8 @@ class Controller:
                 active_conversation_info = "Multiple people"
                 typing_phrase = " are typing"
             typing_text = [("footer_contrast", active_conversation_info + " ")]
-            typing_text.append(("footer",typing_phrase+next(dots)))
-            #typing_text.append(("", typing_phrase + next(dots)))
+            typing_text.append(("footer", typing_phrase + next(dots)))
+            # typing_text.append(("", typing_phrase + next(dots)))
             self.view.set_footer_text(typing_text)
             time.sleep(0.45)
 
