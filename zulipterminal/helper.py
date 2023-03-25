@@ -34,6 +34,7 @@ from typing_extensions import ParamSpec, TypedDict
 
 from zulipterminal.api_types import Composition, EmojiType, Message
 from zulipterminal.config.keys import primary_key_for_command
+from zulipterminal.config.symbol import CHECK_MARK
 from zulipterminal.config.regexes import (
     REGEX_COLOR_3_DIGIT,
     REGEX_COLOR_6_DIGIT,
@@ -45,10 +46,6 @@ from zulipterminal.platform_code import (
     normalized_file_path,
     successful_GUI_return_code,
 )
-
-
-RESOLVED_TOPIC_PREFIX = "✔ "
-
 
 class StreamData(TypedDict):
     name: str
@@ -402,8 +399,10 @@ def index_messages(messages: List[Message], model: Any, index: Index) -> Index:
     }
     """
     narrow = model.narrow
+    RESOLVED_TOPIC_PREFIX = CHECK_MARK + " "
     for msg in messages:
         if "edit_history" in msg:
+            RESOLVED_TOPIC_PREFIX
             for edit_history_event in msg["edit_history"]:
                 if "prev_content" in edit_history_event:
                     index["edited_messages"].add(msg["id"])
