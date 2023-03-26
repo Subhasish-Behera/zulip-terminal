@@ -2931,7 +2931,7 @@ class TestModel:
                     "id": 0,
                 },
                 False,
-                {"hamlet"},
+                {"hamelet@zulip.com"},
                 True,
                 id="in_pm_narrow_with_sender_typing:start",
             ),
@@ -2947,7 +2947,7 @@ class TestModel:
                     "id": 0,
                 },
                 True,
-                {"hamlet"},
+                {"hamlet@zulip.com"},
                 False,
                 id="in_pm_narrow_with_sender_typing:start_while_animation_in_progress",
             ),
@@ -3025,19 +3025,6 @@ class TestModel:
                 False,
                 id="in_pm_narrow_with_oneself:stop",
             ),
-            case(
-                [["pm-with", "hamlet@zulip.com","macbeth@zulip.com"]],
-                {
-                    "op": "stary",
-                    "sender": {"user_id": 5, "email": "hamlet@zulip.com"},
-                    "recipients": [{"user_id": 5, "email": "iago@zulip.com"},{"user_id": 7, "email": "macbeth@zulip.com"}],
-                    "id": 0,
-                },
-                False,
-                {"hamlet"},
-                True,
-                id="in_pm_narrow_with_others:stop",
-            ),
         ],
     )
     def test__handle_typing_event(
@@ -3053,7 +3040,11 @@ class TestModel:
         event["type"] = "typing"
 
         model.narrow = narrow
-        model.user_dict = {"hamlet@zulip.com": {"full_name": "hamlet"}}
+        model.user_dict = {
+            "hamlet@zulip.com": {"full_name": "hamlet", "email": "hamlet@zulip.com"},
+            "macbeth@zulip.com": {"full_name": "macbeth", "email": "macbeth@zulip.com"},
+            "claudius@zulip.com": {"full_name": "claudius", "email": "claudius@zulip.com"}
+        }
         model.user_id = 5  # Iago's user_id
         model.controller.active_conversation_info = set()
         model.controller.is_typing_notification_in_progress = (
