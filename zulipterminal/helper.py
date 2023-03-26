@@ -273,6 +273,34 @@ def set_count(id_list: List[int], controller: Any, new_count: int) -> None:
         time.sleep(0.1)
     controller.update_screen()
 
+def analysze_edit_histtory(msg_id,index,content_changed,stream_changed,current_topic=None,previous_topic=None):
+    resolved_topic_prefix = CHECK_MARK + " "
+    if content_changed:
+        index["editted_messages"].add(msg_id)
+    if stream_changed:
+        index["moved_messages"].add(msg_id)
+    if previous_topic:
+        if not current_topic.startswith(resolved_topic_prefix):
+            if (
+                    previous_topic.startswith(resolved_topic_prefix)
+                    and previous_topic[2:] != current_topic
+            ):
+                index["moved_messages"].add(msg_id)
+            if not previous_topic.startswith(
+                    resolved_topic_prefix
+            ) and not current_topic.startswith(resolved_topic_prefix):
+                index["moved_messages"].add(msg_id)
+        else:
+            if (
+                    previous_topic.startswith(resolved_topic_prefix)
+                    and previous_topic[2:] != current_topic[2:]
+            ):
+                index["moved_messages"].add(msg_id)
+    else:
+        index["edited_messages"].add(msg_id)
+    if msg_id not in index["moved_messages"]:
+        index["edited_messages"].add(msg_id)
+
 
 def index_messages(messages: List[Message], model: Any, index: Index) -> Index:
     """
@@ -404,6 +432,7 @@ def index_messages(messages: List[Message], model: Any, index: Index) -> Index:
     for msg in messages:
         if "edit_history" in msg:
             for edit_history_event in msg["edit_history"]:
+                analysze_edit_history(msg["id"],)
                 if "prev_content" in edit_history_event:
                     index["edited_messages"].add(msg["id"])
                 if "prev_stream" in edit_history_event:
