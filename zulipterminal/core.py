@@ -436,16 +436,21 @@ class Controller:
 
         # Until conversation becomes "inactive" like when a `stop` event is sent
         while self.active_conversation_info:
-            active_conversation_full_name = ", ".join(
+            active_conversation_info = ", ".join(
                 self.model.user_dict[x]["full_name"]
                 for x in self.active_conversation_info
             )
-            self.view.set_footer_text(
-                [
-                    ("footer_contrast", " " + active_conversation_full_name + " "),
-                    " is typing" + next(dots),
-                ]
-            )
+            no_of_typing_users = len(self.active_conversation_info)
+            if no_of_typing_users == 1:
+                typing_phrase = " is typing"
+            elif no_of_typing_users < 4:
+                typing_phrase = " are typing"
+            else:
+                active_conversation_info = "Multiple people"
+                typing_phrase = " are typing"
+            typing_text = [("footer_contrast", active_conversation_info + " ")]
+            typing_text.append(("footer", typing_phrase + next(dots)))
+            self.view.set_footer_text(typing_text)
             time.sleep(0.45)
 
         self.is_typing_notification_in_progress = False

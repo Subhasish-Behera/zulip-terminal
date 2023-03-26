@@ -551,7 +551,7 @@ class TestController:
     @pytest.mark.parametrize(
         "active_conversation_info",
         [
-            case({"userid224@zulip.com"}, id="in_pm_narrow_with_sender_typing:start"),
+            case({"hamlet@zulip.com"}, id="in_pm_narrow_with_sender_typing:start"),
             case(set(), id="in_pm_narrow_with_sender_typing:stop"),
         ],
     )
@@ -559,7 +559,7 @@ class TestController:
         self,
         mocker: MockerFixture,
         controller: Controller,
-        active_conversation_info: Set[Any],
+        active_conversation_info: Any,
     ) -> None:
         set_footer_text = mocker.patch(VIEW + ".set_footer_text")
         mocker.patch(MODULE + ".time.sleep")
@@ -568,7 +568,7 @@ class TestController:
         setattr(
             controller.model,
             USER_DICT,
-            {"userid224@zulip.com": {"full_name": "hamlet"}},
+            {"hamlet@zulip.com": {"full_name": "hamlet"}},
         )
 
         def mock_typing() -> None:
@@ -580,10 +580,30 @@ class TestController:
         if active_conversation_info:
             set_footer_text.assert_has_calls(
                 [
-                    mocker.call([("footer_contrast", " hamlet "), " is typing"]),
-                    mocker.call([("footer_contrast", " hamlet "), " is typing."]),
-                    mocker.call([("footer_contrast", " hamlet "), " is typing.."]),
-                    mocker.call([("footer_contrast", " hamlet "), " is typing..."]),
+                    mocker.call(
+                        [
+                            ("footer_contrast", "hamlet "),
+                            ("footer", " is typing"),
+                        ]
+                    ),
+                    mocker.call(
+                        [
+                            ("footer_contrast", "hamlet "),
+                            ("footer", " is typing."),
+                        ]
+                    ),
+                    mocker.call(
+                        [
+                            ("footer_contrast", "hamlet "),
+                            ("footer", " is typing.."),
+                        ]
+                    ),
+                    mocker.call(
+                        [
+                            ("footer_contrast", "hamlet "),
+                            ("footer", " is typing..."),
+                        ]
+                    ),
                 ]
             )
             set_footer_text.assert_called_with()
