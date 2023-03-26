@@ -551,7 +551,7 @@ class TestController:
     @pytest.mark.parametrize(
         "active_conversation_info",
         [
-            case({"hamlet"}, id="in_pm_narrow_with_sender_typing:start"),
+            case({"hamlet@zulip.com"}, id="in_pm_narrow_with_sender_typing:start"),
             case(set(), id="in_pm_narrow_with_sender_typing:stop"),
         ],
     )
@@ -564,6 +564,12 @@ class TestController:
         set_footer_text = mocker.patch(VIEW + ".set_footer_text")
         mocker.patch(MODULE + ".time.sleep")
         controller.active_conversation_info = active_conversation_info
+        USER_DICT = "user_dict"
+        setattr(
+            controller.model,
+            USER_DICT,
+            {"hamlet@zulip.com": {"full_name": "hamlet"}},
+        )
 
         def mock_typing() -> None:
             controller.active_conversation_info = set()
@@ -574,10 +580,18 @@ class TestController:
         if active_conversation_info:
             set_footer_text.assert_has_calls(
                 [
-                    mocker.call([("footer_contrast", "hamlet "), ("footer"," is typing")]),
-                    mocker.call([("footer_contrast", "hamlet "), ("footer"," is typing.")]),
-                    mocker.call([("footer_contrast", "hamlet "), ("footer"," is typing..")]),
-                    mocker.call([("footer_contrast", "hamlet "), ("footer"," is typing...")]),
+                    mocker.call(
+                        [("footer_contrast", "hamlet "), ("footer", " is typing")]
+                    ),
+                    mocker.call(
+                        [("footer_contrast", "hamlet "), ("footer", " is typing.")]
+                    ),
+                    mocker.call(
+                        [("footer_contrast", "hamlet "), ("footer", " is typing..")]
+                    ),
+                    mocker.call(
+                        [("footer_contrast", "hamlet "), ("footer", " is typing...")]
+                    ),
                 ]
             )
             set_footer_text.assert_called_with()

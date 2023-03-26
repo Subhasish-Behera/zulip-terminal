@@ -1382,14 +1382,12 @@ class Model:
         active_conversation_info: Set[str] = self.controller.active_conversation_info
         sender_email = event["sender"]["email"]
         sender_id = event["sender"]["user_id"]
-        print("narrow",narrow)
-        print("ac",active_conversation_info)
         # If the user is in pm narrow with the person typing
         # and the person typing isn't the user themselves
         if (
             len(narrow) == 1
             and narrow[0][0] == "pm-with"
-            and sender_email in [email.strip() for email in narrow[0][1].split(",")]
+            and sender_email in [email for email in narrow[0][1].split(", ")]
             and sender_id != self.user_id
         ):
             if event["op"] == "start":
