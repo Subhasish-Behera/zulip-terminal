@@ -559,7 +559,7 @@ class TestController:
         self,
         mocker: MockerFixture,
         controller: Controller,
-        active_conversation_info: Set[Any],
+        active_conversation_info: Any,
     ) -> None:
         set_footer_text = mocker.patch(VIEW + ".set_footer_text")
         mocker.patch(MODULE + ".time.sleep")
@@ -580,10 +580,30 @@ class TestController:
         if active_conversation_info:
             set_footer_text.assert_has_calls(
                 [
-                    mocker.call([("footer_contrast", " hamlet "), " is typing"]),
-                    mocker.call([("footer_contrast", " hamlet "), " is typing."]),
-                    mocker.call([("footer_contrast", " hamlet "), " is typing.."]),
-                    mocker.call([("footer_contrast", " hamlet "), " is typing..."]),
+                    mocker.call(
+                        [
+                            ("footer_contrast", "hamlet "),
+                            ("footer", " is typing"),
+                        ]
+                    ),
+                    mocker.call(
+                        [
+                            ("footer_contrast", "hamlet "),
+                            ("footer", " is typing."),
+                        ]
+                    ),
+                    mocker.call(
+                        [
+                            ("footer_contrast", "hamlet "),
+                            ("footer", " is typing.."),
+                        ]
+                    ),
+                    mocker.call(
+                        [
+                            ("footer_contrast", "hamlet "),
+                            ("footer", " is typing..."),
+                        ]
+                    ),
                 ]
             )
             set_footer_text.assert_called_with()
