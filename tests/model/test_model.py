@@ -2888,6 +2888,7 @@ class TestModel:
     @pytest.mark.parametrize(
         (
             "narrow, event, is_notification_in_progress,"
+            "current_active_conversation_info,"
             "expected_active_conversation_info, expected_show_typing_notification,"
         ),
         [
@@ -2899,6 +2900,7 @@ class TestModel:
                     "id": 0,
                 },
                 False,
+                set(),
                 {},
                 False,
                 id="not_in_pm_narrow",
@@ -2915,6 +2917,7 @@ class TestModel:
                     "id": 0,
                 },
                 False,
+                set(),
                 {},
                 False,
                 id="not_in_pm_narrow_with_sender",
@@ -2931,6 +2934,7 @@ class TestModel:
                     "id": 0,
                 },
                 False,
+                set(),
                 {"hamlet@zulip.com"},
                 True,
                 id="in_pm_narrow_with_sender_typing:start",
@@ -2947,6 +2951,7 @@ class TestModel:
                     "id": 0,
                 },
                 True,
+                set(),
                 {"hamlet@zulip.com"},
                 False,
                 id="in_pm_narrow_with_sender_typing:start_while_animation_in_progress",
@@ -2963,6 +2968,7 @@ class TestModel:
                     "id": 0,
                 },
                 True,
+                set(),
                 {},
                 False,
                 id="in_pm_narrow_with_sender_typing:stop",
@@ -2979,6 +2985,7 @@ class TestModel:
                     "id": 0,
                 },
                 False,
+                set(),
                 {},
                 False,
                 id="in_pm_narrow_with_other_myself_typing:start",
@@ -2995,6 +3002,7 @@ class TestModel:
                     "id": 0,
                 },
                 False,
+                set(),
                 {},
                 False,
                 id="in_pm_narrow_with_other_myself_typing:stop",
@@ -3008,6 +3016,7 @@ class TestModel:
                     "id": 0,
                 },
                 False,
+                set(),
                 {},
                 False,
                 id="in_pm_narrow_with_oneself:start",
@@ -3021,9 +3030,130 @@ class TestModel:
                     "id": 0,
                 },
                 False,
+                set(),
                 {},
                 False,
                 id="in_pm_narrow_with_oneself:stop",
+            ),
+            case(
+                [
+                    [
+                        "pm_with",
+                        "hamlet@zulip.com",
+                        "claudius@zulip.com",
+                        "iago@zulip.com",
+                    ]
+                ],
+                {
+                    "op": "start",
+                    "sender": {"user_id": 4, "email": "hamlet@zulip.com"},
+                    "recipients": [
+                        {"user_id": 4, "email": "hamlet@zulip.com"},
+                        {"user_id": 5, "email": "iago@zulip.com"},
+                    ],
+                    "id": 0,
+                },
+                False,
+                set(),
+                {"hamlet@zulip.com"},
+                True,
+                id="in_group_pm_narrow_with_sender_typing:start",
+            ),
+            case(
+                [
+                    [
+                        "pm_with",
+                        "hamlet@zulip.com",
+                        "claudius@zulip.com",
+                        "iago@zulip.com",
+                    ]
+                ],
+                {
+                    "op": "stop",
+                    "sender": {"user_id": 4, "email": "hamlet@zulip.com"},
+                    "recipients": [
+                        {"user_id": 4, "email": "hamlet@zulip.com"},
+                        {"user_id": 5, "email": "iago@zulip.com"},
+                    ],
+                    "id": 0,
+                },
+                True,
+                {"hamlet@zulip.com"},
+                {},
+                False,
+                id="in_group_pm_narrow,sender_typing:stop"
+                "_while animation is in progress",
+            ),
+            case(
+                [["pm_with", "hamlet@zulip.com, claudius@zulip.com"]],
+                {
+                    "op": "start",
+                    "sender": {"user_id": 6, "email": "claudius@zulip.com"},
+                    "recipients": [
+                        {"user_id": 4, "email": "hamlet@zulip.com"},
+                        {"user_id": 6, "email": "claudius@zulip.com"},
+                    ],
+                    "id": 0,
+                },
+                True,
+                {"hamlet@zulip.com"},
+                {"claudius@zulip.com", "hamlet@zulip.com"},
+                False,
+                id="in_group_pm_narrow,second_sender_typing:start"
+                "_while animation in progress",
+            ),
+            case(
+                [["pm_with", "hamlet@zulip.com, claudius@zulip.com"]],
+                {
+                    "op": "stop",
+                    "sender": {"user_id": 6, "email": "claudius@zulip.com"},
+                    "recipients": [
+                        {"user_id": 4, "email": "hamlet@zulip.com"},
+                        {"user_id": 6, "email": "claudius@zulip.com"},
+                    ],
+                    "id": 0,
+                },
+                True,
+                {"claudius@zulip.com", "hamlet@zulip.com"},
+                {"hamlet@zulip.com"},
+                False,
+                id="in_group_pm_narrow,second_sender_typing:stop"
+                "_while animation in progress",
+            ),
+            case(
+                [["pm_with", "hamlet@zulip.com, claudius@zulip.com,iago@zulip.com"]],
+                {
+                    "op": "start",
+                    "sender": {"user_id": 5, "email": "iago@zulip.com"},
+                    "recipients": [
+                        {"user_id": 4, "email": "hamlet@zulip.com"},
+                        {"user_id": 6, "email": "claudius@zulip.com"},
+                    ],
+                    "id": 0,
+                },
+                True,
+                {"claudius@zulip.com", "hamlet@zulip.com"},
+                {"claudius@zulip.com", "hamlet@zulip.com"},
+                False,
+                id="in_group_pm_narrow,user_typing:start"
+                "_while animation in progress",
+            ),
+            case(
+                [["pm_with", "hamlet@zulip.com, claudius@zulip.com,iago@zulip.com"]],
+                {
+                    "op": "stop",
+                    "sender": {"user_id": 5, "email": "iago@zulip.com"},
+                    "recipients": [
+                        {"user_id": 4, "email": "hamlet@zulip.com"},
+                        {"user_id": 6, "email": "claudius@zulip.com"},
+                    ],
+                    "id": 0,
+                },
+                True,
+                {"claudius@zulip.com", "hamlet@zulip.com"},
+                {"claudius@zulip.com", "hamlet@zulip.com"},
+                False,
+                id="in_group_pm_narrow,usertyping:stop_" "while animation in progress",
             ),
         ],
     )
@@ -3034,6 +3164,7 @@ class TestModel:
         narrow,
         event,
         is_notification_in_progress,
+        current_active_conversation_info,
         expected_active_conversation_info,
         expected_show_typing_notification,
     ):
@@ -3041,10 +3172,17 @@ class TestModel:
 
         model.narrow = narrow
         model.user_dict = {
-            "hamlet@zulip.com": {"full_name": "hamlet", "email": "hamlet@zulip.com"}
+            "hamlet@zulip.com": {"full_name": "hamlet", "email": "hamlet@zulip.com"},
+            "macbeth@zulip.com": {"full_name": "macbeth", "email": "macbeth@zulip.com"},
+            "iago@zulip.com": {"full_name": "iag0", "email": "iago@zulip.com"},
+            "verona@zulip.com": {"full_name": "verona", "email": "verona@zulip.com"},
+            "claudius@zulip.com": {
+                "full_name": "claudius",
+                "email": "claudius@zulip.com",
+            },
         }
         model.user_id = 5  # Iago's user_id
-        model.controller.active_conversation_info = set()
+        model.controller.active_conversation_info = current_active_conversation_info
         model.controller.is_typing_notification_in_progress = (
             is_notification_in_progress
         )
