@@ -3082,7 +3082,7 @@ class TestModel:
                 {},
                 False,
                 id="in_group_pm_narrow,sender_typing:stop "
-                   "while animation is in progress",
+                "while animation is in progress",
             ),
             case(
                 [["pm-with", "hamlet@zulip.com, claudius@zulip.com"]],
@@ -3136,7 +3136,7 @@ class TestModel:
                 {"claudius@zulip.com", "hamlet@zulip.com"},
                 False,
                 id="in_group_pm_narrow,user_typing:start"
-                   " while animation in progress",
+                " while animation in progress",
             ),
             case(
                 [["pm-with", "hamlet@zulip.com, claudius@zulip.com,iago@zulip.com"]],
