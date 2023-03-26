@@ -3036,7 +3036,14 @@ class TestModel:
                 id="in_pm_narrow_with_oneself:stop",
             ),
             case(
-                [["pm-with", "hamlet@zulip.com", "claudius@zulip.com","iago@zulip.com"]],
+                [
+                    [
+                        "pm-with",
+                        "hamlet@zulip.com",
+                        "claudius@zulip.com",
+                        "iago@zulip.com",
+                    ]
+                ],
                 {
                     "op": "start",
                     "sender": {"user_id": 4, "email": "hamlet@zulip.com"},
@@ -3053,7 +3060,14 @@ class TestModel:
                 id="in_group_pm_narrow_with_sender_typing:start",
             ),
             case(
-                [["pm-with", "hamlet@zulip.com", "claudius@zulip.com", "iago@zulip.com"]],
+                [
+                    [
+                        "pm-with",
+                        "hamlet@zulip.com",
+                        "claudius@zulip.com",
+                        "iago@zulip.com",
+                    ]
+                ],
                 {
                     "op": "stop",
                     "sender": {"user_id": 4, "email": "hamlet@zulip.com"},
