@@ -3081,8 +3081,8 @@ class TestModel:
                 {"hamlet@zulip.com"},
                 {},
                 False,
-                id="in_group_pm_narrow,sender_typing:stop "
-                "while animation is in progress",
+                id="in_group_pm_narrow,sender_typing:stop"
+                "_while animation is in progress",
             ),
             case(
                 [["pm-with", "hamlet@zulip.com, claudius@zulip.com"]],
@@ -3100,7 +3100,7 @@ class TestModel:
                 {"claudius@zulip.com", "hamlet@zulip.com"},
                 False,
                 id="in_group_pm_narrow,second_sender_typing:start"
-                " while animation in progress",
+                "_while animation in progress",
             ),
             case(
                 [["pm-with", "hamlet@zulip.com, claudius@zulip.com"]],
@@ -3117,8 +3117,8 @@ class TestModel:
                 {"claudius@zulip.com", "hamlet@zulip.com"},
                 {"hamlet@zulip.com"},
                 False,
-                id="in_group_pm_narrow,second_sender_typing:stop "
-                "while animation in progress",
+                id="in_group_pm_narrow,second_sender_typing:stop"
+                "_while animation in progress",
             ),
             case(
                 [["pm-with", "hamlet@zulip.com, claudius@zulip.com,iago@zulip.com"]],
@@ -3136,7 +3136,7 @@ class TestModel:
                 {"claudius@zulip.com", "hamlet@zulip.com"},
                 False,
                 id="in_group_pm_narrow,user_typing:start"
-                " while animation in progress",
+                "_while animation in progress",
             ),
             case(
                 [["pm-with", "hamlet@zulip.com, claudius@zulip.com,iago@zulip.com"]],
@@ -3153,7 +3153,8 @@ class TestModel:
                 {"claudius@zulip.com", "hamlet@zulip.com"},
                 {"claudius@zulip.com", "hamlet@zulip.com"},
                 False,
-                id="in_group_pm_narrow,usertyping:stop while animation in progress",
+                id="in_group_pm_narrow,usertyping:stop_"
+                   "while animation in progress",
             ),
         ],
     )

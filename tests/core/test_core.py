@@ -553,9 +553,18 @@ class TestController:
         [
             case({"hamlet@zulip.com"}, id="in_pm_narrow_with_sender_typing:start"),
             case(set(), id="in_pm_narrow_with_sender_typing:stop"),
-            case({"iago@zulip.com", "hamlet@zulip.com"},id="in_group_pm_narrow_1_member_active"),
-            case({"iago@zulip.com", "verona@zulip.com"},id="in_group_pm_where_3_members_active"),
-            case({"iago@zulip.com", "verona@zulip.com", "fan@zulip.com"},id="in_group_pm_where_4_members_active")
+            case(
+                {"iago@zulip.com", "hamlet@zulip.com"},
+                id="in_group_pm_narrow_1_member_active",
+            ),
+            case(
+                {"iago@zulip.com", "verona@zulip.com"},
+                id="in_group_pm_where_3_members_active",
+            ),
+            case(
+                {"iago@zulip.com", "verona@zulip.com", "fan@zulip.com"},
+                id="in_group_pm_where_4_members_active",
+            ),
         ],
     )
     def test_show_typing_notification(
@@ -571,13 +580,18 @@ class TestController:
         setattr(
             controller.model,
             USER_DICT,
-            {"hamlet@zulip.com": {"full_name": "hamlet"},"iago@zulip.com":{"full_name":"iago"},"verona@zulip.com":{"full_name":"verona"},"fan@zulip.com":{"full_name":"fan"}},
+            {
+                "hamlet@zulip.com": {"full_name": "hamlet"},
+                "iago@zulip.com": {"full_name": "iago"},
+                "verona@zulip.com": {"full_name": "verona"},
+                "fan@zulip.com": {"full_name": "fan"},
+            },
         )
-        length= len(active_conversation_info)
+        length = len(active_conversation_info)
         active_conversation_info = ", ".join(
-            controller.model.user_dict[x]["full_name"]
-            for x in active_conversation_info
+            controller.model.user_dict[x]["full_name"] for x in active_conversation_info
         )
+
         def mock_typing() -> None:
             controller.active_conversation_info = set()
 
@@ -588,33 +602,57 @@ class TestController:
                 set_footer_text.assert_has_calls(
                     [
                         mocker.call(
-                            [("footer_contrast", f"{active_conversation_info} "), ("footer", " is typing")]
+                            [
+                                ("footer_contrast", f"{active_conversation_info} "),
+                                ("footer", " is typing"),
+                            ]
                         ),
                         mocker.call(
-                            [("footer_contrast", f"{active_conversation_info} "), ("footer", " is typing.")]
+                            [
+                                ("footer_contrast", f"{active_conversation_info} "),
+                                ("footer", " is typing."),
+                            ]
                         ),
                         mocker.call(
-                            [("footer_contrast", f"{active_conversation_info} "), ("footer", " is typing..")]
+                            [
+                                ("footer_contrast", f"{active_conversation_info} "),
+                                ("footer", " is typing.."),
+                            ]
                         ),
                         mocker.call(
-                            [("footer_contrast", f"{active_conversation_info} "), ("footer", " is typing...")]
+                            [
+                                ("footer_contrast", f"{active_conversation_info} "),
+                                ("footer", " is typing..."),
+                            ]
                         ),
                     ]
                 )
-            elif length<4:
+            elif length < 4:
                 set_footer_text.assert_has_calls(
                     [
                         mocker.call(
-                            [("footer_contrast", f"{active_conversation_info} "), ("footer", " are typing")]
+                            [
+                                ("footer_contrast", f"{active_conversation_info} "),
+                                ("footer", " are typing"),
+                            ]
                         ),
                         mocker.call(
-                            [("footer_contrast", f"{active_conversation_info} "), ("footer", " are typing.")]
+                            [
+                                ("footer_contrast", f"{active_conversation_info} "),
+                                ("footer", " are typing."),
+                            ]
                         ),
                         mocker.call(
-                            [("footer_contrast", f"{active_conversation_info} "), ("footer", " are typing..")]
+                            [
+                                ("footer_contrast", f"{active_conversation_info} "),
+                                ("footer", " are typing.."),
+                            ]
                         ),
                         mocker.call(
-                            [("footer_contrast", f"{active_conversation_info} "), ("footer", " are typing...")]
+                            [
+                                ("footer_contrast", f"{active_conversation_info} "),
+                                ("footer", " are typing..."),
+                            ]
                         ),
                     ]
                 )
@@ -622,16 +660,28 @@ class TestController:
                 set_footer_text.assert_has_calls(
                     [
                         mocker.call(
-                            [("footer_contrast", f"Multiple people "), ("footer", " are typing")]
+                            [
+                                ("footer_contrast", "Multiple people "),
+                                ("footer", " are typing"),
+                            ]
                         ),
                         mocker.call(
-                            [("footer_contrast", f"Multiple people "), ("footer", " are typing.")]
+                            [
+                                ("footer_contrast", "Multiple people "),
+                                ("footer", " are typing."),
+                            ]
                         ),
                         mocker.call(
-                            [("footer_contrast", f"Multiple people "), ("footer", " are typing..")]
+                            [
+                                ("footer_contrast", "Multiple people "),
+                                ("footer", " are typing.."),
+                            ]
                         ),
                         mocker.call(
-                            [("footer_contrast", f"Multiple people "), ("footer", " is typing...")]
+                            [
+                                ("footer_contrast", "Multiple people "),
+                                ("footer", " is typing..."),
+                            ]
                         ),
                     ]
                 )
