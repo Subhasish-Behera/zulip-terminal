@@ -3081,7 +3081,7 @@ class TestModel:
                 {"hamlet@zulip.com"},
                 {},
                 False,
-                id="in_group_pm_narrow_with_sender_typing:stop while animation in progress",
+                id="in_group_pm_narrow,sender_typing:stop while animation in progress",
             ),
             case(
                 [["pm-with", "hamlet@zulip.com, claudius@zulip.com"]],
@@ -3098,7 +3098,8 @@ class TestModel:
                 {"hamlet@zulip.com"},
                 {"claudius@zulip.com", "hamlet@zulip.com"},
                 False,
-                id="in_group_pm_narrow_with_second_sender_typing:start while animation in progress",
+                id="in_group_pm_narrow,second_sender_typing:start"
+                   " while animation in progress",
             ),
             case(
                 [["pm-with", "hamlet@zulip.com, claudius@zulip.com"]],
@@ -3115,7 +3116,8 @@ class TestModel:
                 {"claudius@zulip.com", "hamlet@zulip.com"},
                 {"hamlet@zulip.com"},
                 False,
-                id="in_group_pm_narrow_with_second_sender_typing:stop while animation in progress",
+                id="in_group_pm_narrow,second_sender_typing:stop "
+                   "while animation in progress",
             ),
             case(
                 [["pm-with", "hamlet@zulip.com, claudius@zulip.com,iago@zulip.com"]],
@@ -3132,7 +3134,7 @@ class TestModel:
                 {"claudius@zulip.com", "hamlet@zulip.com"},
                 {"claudius@zulip.com", "hamlet@zulip.com"},
                 False,
-                id="in_group_pm_narrow_with_user_typing:start while animation in progress",
+                id="in_group_pm_narrow,user_typing:start while animation in progress",
             ),
             case(
                 [["pm-with", "hamlet@zulip.com, claudius@zulip.com,iago@zulip.com"]],
@@ -3149,7 +3151,7 @@ class TestModel:
                 {"claudius@zulip.com", "hamlet@zulip.com"},
                 {"claudius@zulip.com", "hamlet@zulip.com"},
                 False,
-                id="in_group_pm_narrow_with_user_typing:stop while animation in progress",
+                id="in_group_pm_narrow,usertyping:stop while animation in progress",
             ),
         ],
     )
