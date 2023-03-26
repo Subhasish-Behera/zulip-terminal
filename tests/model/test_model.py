@@ -3153,8 +3153,7 @@ class TestModel:
                 {"claudius@zulip.com", "hamlet@zulip.com"},
                 {"claudius@zulip.com", "hamlet@zulip.com"},
                 False,
-                id="in_group_pm_narrow,usertyping:stop_"
-                   "while animation in progress",
+                id="in_group_pm_narrow,usertyping:stop_" "while animation in progress",
             ),
         ],
     )
