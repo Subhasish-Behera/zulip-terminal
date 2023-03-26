@@ -3076,13 +3076,13 @@ class TestModel:
                     "sender": {"user_id": 6, "email": "claudius@zulip.com"},
                     "recipients": [
                         {"user_id": 4, "email": "hamlet@zulip.com"},
-                        {"user_id": 6, "email": "claudius@zulip.com"}
+                        {"user_id": 6, "email": "claudius@zulip.com"},
                     ],
                     "id": 0,
                 },
                 True,
                 {"hamlet@zulip.com"},
-                {"claudius@zulip.com","hamlet@zulip.com"},
+                {"claudius@zulip.com", "hamlet@zulip.com"},
                 False,
                 id="in_group_pm_narrow_with_second_sender_typing:start while animation in progress",
             ),
@@ -3093,7 +3093,7 @@ class TestModel:
                     "sender": {"user_id": 6, "email": "claudius@zulip.com"},
                     "recipients": [
                         {"user_id": 4, "email": "hamlet@zulip.com"},
-                        {"user_id": 6, "email": "claudius@zulip.com"}
+                        {"user_id": 6, "email": "claudius@zulip.com"},
                     ],
                     "id": 0,
                 },
@@ -3110,7 +3110,7 @@ class TestModel:
                     "sender": {"user_id": 5, "email": "iago@zulip.com"},
                     "recipients": [
                         {"user_id": 4, "email": "hamlet@zulip.com"},
-                        {"user_id": 6, "email": "claudius@zulip.com"}
+                        {"user_id": 6, "email": "claudius@zulip.com"},
                     ],
                     "id": 0,
                 },
@@ -3127,7 +3127,7 @@ class TestModel:
                     "sender": {"user_id": 5, "email": "iago@zulip.com"},
                     "recipients": [
                         {"user_id": 4, "email": "hamlet@zulip.com"},
-                        {"user_id": 6, "email": "claudius@zulip.com"}
+                        {"user_id": 6, "email": "claudius@zulip.com"},
                     ],
                     "id": 0,
                 },
@@ -3157,8 +3157,11 @@ class TestModel:
             "hamlet@zulip.com": {"full_name": "hamlet", "email": "hamlet@zulip.com"},
             "macbeth@zulip.com": {"full_name": "macbeth", "email": "macbeth@zulip.com"},
             "iago@zulip.com": {"full_name": "iag0", "email": "iago@zulip.com"},
-            "verona@zulip.com": {"full_name":"verona", "email": "verona@zulip.com"},
-            "claudius@zulip.com": {"full_name": "claudius", "email": "claudius@zulip.com"}
+            "verona@zulip.com": {"full_name": "verona", "email": "verona@zulip.com"},
+            "claudius@zulip.com": {
+                "full_name": "claudius",
+                "email": "claudius@zulip.com",
+            },
         }
         model.user_id = 5  # Iago's user_id
         model.controller.active_conversation_info = current_active_conversation_info
