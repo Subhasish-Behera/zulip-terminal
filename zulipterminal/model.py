@@ -59,6 +59,7 @@ from zulipterminal.helper import (
     display_error_if_present,
     index_messages,
     initial_index,
+    analysze_edit_histtory,
     notify_if_message_sent_outside_narrow,
     set_count,
 )
@@ -1591,31 +1592,44 @@ class Model:
         indexed_message = self.index["messages"].get(message_id, None)
         resolved_topic_prefix = CHECK_MARK + " "
         if indexed_message:
-            if "orig_content" in event:
-                self.index["edited_messages"].add(message_id)
-            if "prev_stream" in event:
-                self.index["moved_messages"].add(message_id)
-            if "subject" in event:
-                if not event["subject"].startswith(resolved_topic_prefix):
-                    if (
-                        event["orig_subject"].startswith(resolved_topic_prefix)
-                        and event["orig_subject"][2:] != event["subject"]
-                    ):
-                        self.index["moved_messages"].add(message_id)
-                    if not event["orig_subject"].startswith(
-                        resolved_topic_prefix
-                    ) and not event["subject"].startswith(resolved_topic_prefix):
-                        self.index["moved_messages"].add(message_id)
-                else:
-                    if (
-                        event["orig_subject"].startswith(resolved_topic_prefix)
-                        and event["orig_subject"][2:] != event["subject"][2:]
-                    ):
-                        self.index["moved_messages"].add(message_id)
+            # if "orig_content" in event:
+            #     self.index["edited_messages"].add(message_id)
+            # if "prev_stream" in event:
+            #     self.index["moved_messages"].add(message_id)
+            # if "subject" in event:
+            #     if not event["subject"].startswith(resolved_topic_prefix):
+            #         if (
+            #             event["orig_subject"].startswith(resolved_topic_prefix)
+            #             and event["orig_subject"][2:] != event["subject"]
+            #         ):
+            #             self.index["moved_messages"].add(message_id)
+            #         if not event["orig_subject"].startswith(
+            #             resolved_topic_prefix
+            #         ) and not event["subject"].startswith(resolved_topic_prefix):
+            #             self.index["moved_messages"].add(message_id)
+            #     else:
+            #         if (
+            #             event["orig_subject"].startswith(resolved_topic_prefix)
+            #             and event["orig_subject"][2:] != event["subject"][2:]
+            #         ):
+            #             self.index["moved_messages"].add(message_id)
+            # else:
+            #     self.index["edited_messages"].add(message_id)
+            # if message_id not in self.index["moved_messages"]:
+            #     self.index["edited_messages"].add(message_id)
+            if "prev_content" in event:
+                content_changed = True
             else:
-                self.index["edited_messages"].add(message_id)
-            if message_id not in self.index["moved_messages"]:
-                self.index["edited_messages"].add(message_id)
+                content_changed = False
+            if "prev_stream" in event:
+                stream_changed = True
+            else:
+                stream_changed = False
+            if "subject" in event:
+                current_topic = event["subject"]
+                previous_topic = event["orig_subject"]
+                analysze_edit_histtory(message_id, self.index, content_changed, stream_changed, current_topic,
+                                       previous_topic)
 
         # Update the rendered content, if the message is indexed
         if "rendered_content" in event and indexed_message:

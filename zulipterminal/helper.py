@@ -276,7 +276,7 @@ def set_count(id_list: List[int], controller: Any, new_count: int) -> None:
 def analysze_edit_histtory(msg_id,index,content_changed,stream_changed,current_topic=None,previous_topic=None):
     resolved_topic_prefix = CHECK_MARK + " "
     if content_changed:
-        index["editted_messages"].add(msg_id)
+        index["edited_messages"].add(msg_id)
     if stream_changed:
         index["moved_messages"].add(msg_id)
     if previous_topic:
@@ -432,44 +432,60 @@ def index_messages(messages: List[Message], model: Any, index: Index) -> Index:
     for msg in messages:
         if "edit_history" in msg:
             for edit_history_event in msg["edit_history"]:
-                analysze_edit_history(msg["id"],)
                 if "prev_content" in edit_history_event:
-                    index["edited_messages"].add(msg["id"])
-                if "prev_stream" in edit_history_event:
-                    index["moved_messages"].add(msg["id"])
-                if "prev_topic" in edit_history_event:
-                    # We know it has a topic edit. Now we need to determine if
-                    # it was a true move or a resolve/unresolve.
-                    if not edit_history_event["topic"].startswith(
-                        resolved_topic_prefix
-                    ):
-                        if (
-                            edit_history_event["prev_topic"].startswith(
-                                resolved_topic_prefix
-                            )
-                            and edit_history_event["prev_topic"][2:]
-                            != edit_history_event["topic"]
-                        ):
-                            index["moved_messages"].add(msg["id"])
-                        if not edit_history_event["prev_topic"].startswith(
-                            resolved_topic_prefix
-                        ) and not edit_history_event["topic"].startswith(
-                            resolved_topic_prefix
-                        ):
-                            index["moved_messages"].add(msg["id"])
-                    else:
-                        if (
-                            edit_history_event["prev_topic"].startswith(
-                                resolved_topic_prefix
-                            )
-                            and edit_history_event["prev_topic"][2:]
-                            != edit_history_event["topic"][2:]
-                        ):
-                            index["moved_messages"].add(msg["id"])
+                    content_changed = True
                 else:
-                    index["edited_messages"].add(msg["id"])
-            if msg["id"] not in index["moved_messages"]:
-                index["edited_messages"].add(msg["id"])
+                    content_changed = False
+                if "prev_stream" in edit_history_event:
+                    stream_changed = True
+                else:
+                    stream_changed = False
+                if "prev_topic" in edit_history_event:
+                    current_topic = msg["subject"]
+                    previous_topic = edit_history_event["prev_topic"]
+                    analysze_edit_histtory(msg["id"], index, content_changed, stream_changed, current_topic,
+                                           previous_topic)
+                else:
+                    analysze_edit_histtory(msg["id"], index, content_changed, stream_changed)
+
+            # for edit_history_event in msg["edit_history"]:
+            #     if "prev_content" in edit_history_event:
+            #         index["edited_messages"].add(msg["id"])
+            #     if "prev_stream" in edit_history_event:
+            #         index["moved_messages"].add(msg["id"])
+            #     if "prev_topic" in edit_history_event:
+            #         # We know it has a topic edit. Now we need to determine if
+            #         # it was a true move or a resolve/unresolve.
+            #         if not edit_history_event["topic"].startswith(
+            #             resolved_topic_prefix
+            #         ):
+            #             if (
+            #                 edit_history_event["prev_topic"].startswith(
+            #                     resolved_topic_prefix
+            #                 )
+            #                 and edit_history_event["prev_topic"][2:]
+            #                 != edit_history_event["topic"]
+            #             ):
+            #                 index["moved_messages"].add(msg["id"])
+            #             if not edit_history_event["prev_topic"].startswith(
+            #                 resolved_topic_prefix
+            #             ) and not edit_history_event["topic"].startswith(
+            #                 resolved_topic_prefix
+            #             ):
+            #                 index["moved_messages"].add(msg["id"])
+            #         else:
+            #             if (
+            #                 edit_history_event["prev_topic"].startswith(
+            #                     resolved_topic_prefix
+            #                 )
+            #                 and edit_history_event["prev_topic"][2:]
+            #                 != edit_history_event["topic"][2:]
+            #             ):
+            #                 index["moved_messages"].add(msg["id"])
+            #     else:
+            #         index["edited_messages"].add(msg["id"])
+            # if msg["id"] not in index["moved_messages"]:
+            #     index["edited_messages"].add(msg["id"])
         index["messages"][msg["id"]] = msg
         if not narrow:
             index["all_msg_ids"].add(msg["id"])

@@ -144,7 +144,6 @@ def test_index_edited_message(
     for msg_id, msg in expected_index["messages"].items():
         if msg_id in edited_msgs:
             msg["edit_history"] = []
-
     assert index_messages(messages, model, model.index) == expected_index
 
 
