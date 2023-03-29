@@ -42,7 +42,7 @@ from zulipterminal.api_types import (
     Subscription,
 )
 from zulipterminal.config.keys import primary_key_for_command
-from zulipterminal.config.symbols import CHECK_MARK, STREAM_TOPIC_SEPARATOR
+from zulipterminal.config.symbols import STREAM_TOPIC_SEPARATOR
 from zulipterminal.config.ui_mappings import (
     EDIT_TOPIC_POLICY,
     ROLE_BY_ID,
@@ -53,13 +53,13 @@ from zulipterminal.helper import (
     NamedEmojiData,
     StreamData,
     TidiedUserInfo,
+    analyse_edit_histtory,
     asynch,
     canonicalize_color,
     classify_unread_counts,
     display_error_if_present,
     index_messages,
     initial_index,
-    analysze_edit_histtory,
     notify_if_message_sent_outside_narrow,
     set_count,
 )
@@ -1590,7 +1590,6 @@ class Model:
         #       they are not all marked as edited, as per server optimization
         message_id = event["message_id"]
         indexed_message = self.index["messages"].get(message_id, None)
-        resolved_topic_prefix = CHECK_MARK + " "
         if indexed_message:
             # if "orig_content" in event:
             #     self.index["edited_messages"].add(message_id)
@@ -1618,18 +1617,27 @@ class Model:
             # if message_id not in self.index["moved_messages"]:
             #     self.index["edited_messages"].add(message_id)
             if "prev_content" in event:
+                print("1")
                 content_changed = True
             else:
                 content_changed = False
             if "prev_stream" in event:
+                print("2")
                 stream_changed = True
             else:
                 stream_changed = False
             if "subject" in event:
+                print("3")
                 current_topic = event["subject"]
                 previous_topic = event["orig_subject"]
-                analysze_edit_histtory(message_id, self.index, content_changed, stream_changed, current_topic,
-                                       previous_topic)
+                analyse_edit_histtory(
+                    message_id,
+                    self.index,
+                    content_changed,
+                    stream_changed,
+                    current_topic,
+                    previous_topic,
+                )
 
         # Update the rendered content, if the message is indexed
         if "rendered_content" in event and indexed_message:
