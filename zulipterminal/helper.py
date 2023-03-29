@@ -284,10 +284,8 @@ def analyse_edit_histtory(
 ) -> None:
     resolved_topic_prefix = CHECK_MARK + " "
     if content_changed:
-        print("a")
         index["edited_messages"].add(msg_id)
     elif stream_changed:
-        print("b")
         index["moved_messages"].add(msg_id)
     elif previous_topic:
         if not current_topic.startswith(resolved_topic_prefix):
@@ -295,25 +293,20 @@ def analyse_edit_histtory(
                 previous_topic.startswith(resolved_topic_prefix)
                 and previous_topic[2:] != current_topic
             ):
-                print("c")
                 index["moved_messages"].add(msg_id)
             if not previous_topic.startswith(
                 resolved_topic_prefix
             ) and not current_topic.startswith(resolved_topic_prefix):
-                print("d")
                 index["moved_messages"].add(msg_id)
         else:
             if (
                 previous_topic.startswith(resolved_topic_prefix)
                 and previous_topic[2:] != current_topic[2:]
             ):
-                print("e")
                 index["moved_messages"].add(msg_id)
     else:
-        print("f")
         index["edited_messages"].add(msg_id)
     if msg_id not in index["moved_messages"]:
-        print("g")
         index["edited_messages"].add(msg_id)
 
 
@@ -445,31 +438,43 @@ def index_messages(messages: List[Message], model: Any, index: Index) -> Index:
     narrow = model.narrow
     for msg in messages:
         if "edit_history" in msg:
+            stream_changed = False
+            content_changed = False
+            current_topic = None
+            previous_topic = None
             for edit_history_event in msg["edit_history"]:
                 if "prev_content" in edit_history_event:
                     content_changed = True
-                else:
-                    content_changed = False
+                # else:
+                #     content_changed = False
                 if "prev_stream" in edit_history_event:
                     stream_changed = True
-                else:
-                    stream_changed = False
+                # else:
+                #     stream_changed = False
                 if "prev_topic" in edit_history_event:
                     current_topic = msg["subject"]
                     previous_topic = edit_history_event["prev_topic"]
-                    analyse_edit_histtory(
-                        msg["id"],
-                        index,
-                        content_changed,
-                        stream_changed,
-                        current_topic,
-                        previous_topic,
-                    )
-                else:
-                    analyse_edit_histtory(
-                        msg["id"], index, content_changed, stream_changed
-                    )
-
+                #     analyse_edit_histtory(
+                #         msg["id"],
+                #         index,
+                #         content_changed,
+                #         stream_changed,
+                #         current_topic,
+                #         previous_topic,
+                #     )
+                # else:
+                #     print("p")
+                #     analyse_edit_histtory(
+                #         msg["id"], index, content_changed, stream_changed
+                #     )
+            analyse_edit_histtory(
+                msg["id"],
+                index,
+                content_changed,
+                stream_changed,
+                current_topic,
+                previous_topic,
+            )
             # for edit_history_event in msg["edit_history"]:
             #     if "prev_content" in edit_history_event:
             #         index["edited_messages"].add(msg["id"])

@@ -1589,7 +1589,11 @@ class Model:
         # NOTE: If all messages in topic have topic edited,
         #       they are not all marked as edited, as per server optimization
         message_id = event["message_id"]
+        # message_ids = event["message_ids"]
+        print("event",event)
         indexed_message = self.index["messages"].get(message_id, None)
+        current_topic = None
+        previous_topic = None
         if indexed_message:
             # if "orig_content" in event:
             #     self.index["edited_messages"].add(message_id)
@@ -1617,27 +1621,25 @@ class Model:
             # if message_id not in self.index["moved_messages"]:
             #     self.index["edited_messages"].add(message_id)
             if "prev_content" in event:
-                print("1")
                 content_changed = True
             else:
                 content_changed = False
             if "prev_stream" in event:
-                print("2")
                 stream_changed = True
             else:
                 stream_changed = False
             if "subject" in event:
-                print("3")
                 current_topic = event["subject"]
                 previous_topic = event["orig_subject"]
-                analyse_edit_histtory(
-                    message_id,
-                    self.index,
-                    content_changed,
-                    stream_changed,
-                    current_topic,
-                    previous_topic,
-                )
+
+            analyse_edit_histtory(
+                message_id,
+                self.index,
+                content_changed,
+                stream_changed,
+                current_topic,
+                previous_topic
+            )
 
         # Update the rendered content, if the message is indexed
         if "rendered_content" in event and indexed_message:
