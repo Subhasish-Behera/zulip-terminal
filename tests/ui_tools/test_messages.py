@@ -1082,44 +1082,46 @@ class TestMessageBox:
         assert len(view_components) == 1
         assert isinstance(view_components[0], Padding)
 
-    @pytest.mark.parametrize(["message_edited",
-                              "message_moved",
-                             "expected_left_padding",
-                             "expected_label_text",
-                             ],
-    [
-        case(
-            True,
-            False,
-             7, "EDITED",
-            id="message_indexed_to_edited_messages"
-        ),
-        case(
-             False,
-             True,
-             6, "MOVED",
-            id="message_indexed_to_moved_messages"
-        ),
-        case(
-            False,
-            False,
-            0, "EDITED",
-            id="message_neither_index_to_edited_messages_or_moved_messages"
-        )
-    ],
+    @pytest.mark.parametrize(
+        [
+            "message_edited",
+            "message_moved",
+            "expected_left_padding",
+            "expected_label_text",
+        ],
+        [
+            case(True, False, 7, "EDITED", id="message_indexed_to_edited_messages"),
+            case(False, True, 6, "MOVED", id="message_indexed_to_moved_messages"),
+            case(
+                False,
+                False,
+                0,
+                "EDITED",
+                id="message_neither_index_to_edited_messages_or_moved_messages",
+            ),
+        ],
     )
     def test_main_view_generates_EDITED_or_MOVED_label(
-        self, mocker,messages_successful_response,message_edited,message_moved,expected_left_padding, expected_label_text
+        self,
+        mocker,
+        messages_successful_response,
+        message_edited,
+        message_moved,
+        expected_left_padding,
+        expected_label_text,
     ):
         messages = messages_successful_response["messages"]
         for message in messages:
             msg_id = message["id"]
             message_index = {
                 "edited_messages": {msg_id} if message_edited else set(),
-                "moved_messages": {msg_id} if message_moved else set()
+                "moved_messages": {msg_id} if message_moved else set(),
             }
-            self.model.index = dict(self.model.index,  edited_messages=message_index["edited_messages"],
-            moved_messages=message_index["moved_messages"],)
+            self.model.index = dict(
+                self.model.index,
+                edited_messages=message_index["edited_messages"],
+                moved_messages=message_index["moved_messages"],
+            )
             msg_box = MessageBox(message, self.model, message)
             view_components = msg_box.main_view()
 
