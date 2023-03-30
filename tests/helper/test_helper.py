@@ -113,9 +113,8 @@ def test_index_messages_narrow_user_multiple(
 
 
 @pytest.mark.parametrize(
-    "content_changed, stream_changed, current_topic, old_topic, expected_result",
+    "content_changed, stream_changed, old_topic, current_topic, expected_result",
     [
-        # only stream changed
         (
             False,
             True,
@@ -123,7 +122,6 @@ def test_index_messages_narrow_user_multiple(
             None,
             {"edited_messages": {12345}, "moved_messages": set()},
         ),
-        # only content changed
         (
             True,
             False,
@@ -131,7 +129,6 @@ def test_index_messages_narrow_user_multiple(
             None,
             {"edited_messages": {12345}, "moved_messages": set()},
         ),
-        # both stream and content changed
         (
             True,
             True,
@@ -139,7 +136,13 @@ def test_index_messages_narrow_user_multiple(
             "Topic C",
             {"edited_messages": {12345}, "moved_messages": set()},
         ),
-        # topic changed
+        (
+            True,
+            False,
+            "Topic B",
+            "Topic C",
+            {"edited_messages": {12345}, "moved_messages": set()},
+        ),
         (
             False,
             False,
@@ -147,7 +150,6 @@ def test_index_messages_narrow_user_multiple(
             "Topic E",
             {"edited_messages": set(), "moved_messages": {12345}},
         ),
-        # topic and stream changed
         (
             False,
             True,
@@ -155,10 +157,6 @@ def test_index_messages_narrow_user_multiple(
             "Topic G",
             {"edited_messages": {12345}, "moved_messages": set()},
         ),
-        # topic changed but only resolve/unnresolve
-        # (False, False, "✔ Topic H", "Topic H", {
-        # "edited_messages": set(), "moved_messages": {98765}}),
-        # topic changed resolve to resolve but different topic
         (
             False,
             False,
@@ -166,7 +164,6 @@ def test_index_messages_narrow_user_multiple(
             "✔ Topic J",
             {"edited_messages": set(), "moved_messages": {12345}},
         ),
-        # normal topic 1 to topic 2(both are unresolved)
         (
             False,
             False,
@@ -174,7 +171,6 @@ def test_index_messages_narrow_user_multiple(
             "Topic L",
             {"edited_messages": set(), "moved_messages": {12345}},
         ),
-        # resolved topic to unresolved topic
         (
             False,
             False,
@@ -182,7 +178,6 @@ def test_index_messages_narrow_user_multiple(
             "Topic M",
             {"edited_messages": set(), "moved_messages": set()},
         ),
-        # unresolved topic to resolved topic
         (
             False,
             False,
@@ -190,6 +185,34 @@ def test_index_messages_narrow_user_multiple(
             "✔ Topic M",
             {"edited_messages": set(), "moved_messages": set()},
         ),
+        (
+            False,
+            False,
+            "✔ Topic N",
+            "Topic M",
+            {"edited_messages": set(), "moved_messages": {12345}},
+        ),
+        (
+                False,
+                False,
+                "Topic M",
+                "✔ Topic N",
+                {"edited_messages": set(), "moved_messages": {12345}},
+        ),
+    ],
+    ids=[
+        "only stream changed",
+        "only content changed",
+        "both stream and content changed",
+        "both content and topic changed",
+        "actual topic change",
+        "topic and stream changed",
+        "topic changed from resolved to resolved but different topic",
+        "topic changed when both are unresolved",
+        "only resolved topic to unresolved topic",
+        "only unresolved topic to resolved topic",
+        "resolved topic to changed unresolved topic",
+        "unresolved topic to changed resolved topic",
     ],
 )
 def test_analyse_edit_history(

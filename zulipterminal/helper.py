@@ -300,8 +300,12 @@ def analyse_edit_history(
         else:
             if old_topic_resolved and old_topic[2:] != current_topic[2:]:
                 index["moved_messages"].add(msg_id)
-            if not old_topic_resolved and current_topic[2:] == old_topic:
-                resolve_change = True
+            if not old_topic_resolved:
+                if current_topic[2:] != old_topic:
+                    index["moved_messages"].add(msg_id)
+                if current_topic[2:] == old_topic:
+                    resolve_change = True
+
     else:
         index["edited_messages"].add(msg_id)
     if msg_id not in index["moved_messages"] and not resolve_change:
