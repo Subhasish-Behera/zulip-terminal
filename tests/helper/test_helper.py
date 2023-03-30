@@ -8,6 +8,7 @@ from zulipterminal.api_types import Composition
 from zulipterminal.config.keys import primary_key_for_command
 from zulipterminal.helper import (
     Index,
+    analyse_edit_history,
     canonicalize_color,
     classify_unread_counts,
     display_error_if_present,
@@ -109,6 +110,135 @@ def test_index_messages_narrow_user_multiple(
         "bar@zulip.com": {"user_id": 5180},
     }
     assert index_messages(messages, model, model.index) == index_user_multiple
+
+
+@pytest.mark.parametrize(
+    "content_changed, stream_changed, old_topic, current_topic, expected_result",
+    [
+        (
+            False,
+            True,
+            None,
+            None,
+            {"edited_messages": {12345}, "moved_messages": set()},
+        ),
+        (
+            True,
+            False,
+            None,
+            None,
+            {"edited_messages": {12345}, "moved_messages": set()},
+        ),
+        (
+            True,
+            True,
+            "Topic B",
+            "Topic C",
+            {"edited_messages": {12345}, "moved_messages": set()},
+        ),
+        (
+            True,
+            False,
+            "Topic B",
+            "Topic C",
+            {"edited_messages": {12345}, "moved_messages": set()},
+        ),
+        (
+            False,
+            False,
+            "Topic D",
+            "Topic E",
+            {"edited_messages": set(), "moved_messages": {12345}},
+        ),
+        (
+            False,
+            True,
+            "Topic F",
+            "Topic G",
+            {"edited_messages": {12345}, "moved_messages": set()},
+        ),
+        (
+            False,
+            False,
+            "✔ Topic I",
+            "✔ Topic J",
+            {"edited_messages": set(), "moved_messages": {12345}},
+        ),
+        (
+            False,
+            False,
+            "Topic K",
+            "Topic L",
+            {"edited_messages": set(), "moved_messages": {12345}},
+        ),
+        (
+            False,
+            False,
+            "✔ Topic M",
+            "Topic M",
+            {"edited_messages": set(), "moved_messages": set()},
+        ),
+        (
+            False,
+            False,
+            "Topic M",
+            "✔ Topic M",
+            {"edited_messages": set(), "moved_messages": set()},
+        ),
+        (
+            False,
+            False,
+            "✔ Topic N",
+            "Topic M",
+            {"edited_messages": set(), "moved_messages": {12345}},
+        ),
+        (
+            False,
+            False,
+            "Topic M",
+            "✔ Topic N",
+            {"edited_messages": set(), "moved_messages": {12345}},
+        ),
+    ],
+    ids=[
+        "only stream changed",
+        "only content changed",
+        "both stream and content changed",
+        "both content and topic changed",
+        "actual topic change",
+        "topic and stream changed",
+        "topic changed from resolved to resolved but different topic",
+        "topic changed when both are unresolved",
+        "only resolved topic to unresolved topic",
+        "only unresolved topic to resolved topic",
+        "resolved topic to changed unresolved topic",
+        "unresolved topic to changed resolved topic",
+    ],
+)
+def test_analyse_edit_history(
+    content_changed: bool,
+    stream_changed: bool,
+    current_topic: str,
+    old_topic: str,
+    expected_result: Dict[str, Any],
+    initial_index: Index,
+) -> None:
+    msg_id = 12345
+    expected_index = dict(
+        initial_index,
+        edited_messages=expected_result["edited_messages"],
+        moved_messages=expected_result["moved_messages"],
+    )
+    analyse_edit_history(
+        msg_id,
+        initial_index,
+        content_changed,
+        stream_changed,
+        current_topic,
+        old_topic,
+    )
+
+    assert initial_index == expected_index
 
 
 @pytest.mark.parametrize(
