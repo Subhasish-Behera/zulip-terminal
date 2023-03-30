@@ -193,11 +193,11 @@ def test_index_messages_narrow_user_multiple(
             {"edited_messages": set(), "moved_messages": {12345}},
         ),
         (
-                False,
-                False,
-                "Topic M",
-                "✔ Topic N",
-                {"edited_messages": set(), "moved_messages": {12345}},
+            False,
+            False,
+            "Topic M",
+            "✔ Topic N",
+            {"edited_messages": set(), "moved_messages": {12345}},
         ),
     ],
     ids=[
