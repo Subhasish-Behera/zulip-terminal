@@ -1590,7 +1590,6 @@ class Model:
         #       they are not all marked as edited, as per server optimization
         message_id = event["message_id"]
         # message_ids = event["message_ids"]
-        print("event",event)
         indexed_message = self.index["messages"].get(message_id, None)
         current_topic = None
         previous_topic = None

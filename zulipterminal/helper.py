@@ -39,7 +39,7 @@ from zulipterminal.config.regexes import (
     REGEX_COLOR_6_DIGIT,
     REGEX_QUOTED_FENCE_LENGTH,
 )
-from zulipterminal.config.symbols import CHECK_MARK
+from zulipterminal.config.symbols import RESOLVED_TOPIC_PREFIX
 from zulipterminal.config.ui_mappings import StreamAccessType
 from zulipterminal.platform_code import (
     PLATFORM,
@@ -282,31 +282,40 @@ def analyse_edit_histtory(
     current_topic: Any = None,
     previous_topic: Any = None,
 ) -> None:
-    resolved_topic_prefix = CHECK_MARK + " "
+    resolve_change = False
+    resolved_topic_prefix = RESOLVED_TOPIC_PREFIX + " "
     if content_changed:
         index["edited_messages"].add(msg_id)
     elif stream_changed:
         index["moved_messages"].add(msg_id)
     elif previous_topic:
         if not current_topic.startswith(resolved_topic_prefix):
+            #if previous_topic.startswith(resolved_topic_prefix) and prev
             if (
                 previous_topic.startswith(resolved_topic_prefix)
-                and previous_topic[2:] != current_topic
             ):
-                index["moved_messages"].add(msg_id)
+                #if its not a UR to R
+                if previous_topic[2:] != current_topic:
+                    index["moved_messages"].add(msg_id)
+                if previous_topic[2:] == current_topic:
+                    resolve_change = True
             if not previous_topic.startswith(
                 resolved_topic_prefix
             ) and not current_topic.startswith(resolved_topic_prefix):
+                # if both are UR
                 index["moved_messages"].add(msg_id)
         else:
             if (
                 previous_topic.startswith(resolved_topic_prefix)
                 and previous_topic[2:] != current_topic[2:]
             ):
+                #current topic is R and prev topic is R and both are diffrent
                 index["moved_messages"].add(msg_id)
+            if (not previous_topic.startswith(resolved_topic_prefix) and current_topic[2:] == previous_topic):
+                resolve_change = True
     else:
         index["edited_messages"].add(msg_id)
-    if msg_id not in index["moved_messages"]:
+    if msg_id not in index["moved_messages"] and not resolve_change:
         index["edited_messages"].add(msg_id)
 
 
@@ -442,6 +451,7 @@ def index_messages(messages: List[Message], model: Any, index: Index) -> Index:
             content_changed = False
             current_topic = None
             previous_topic = None
+            if msg["id"] == 1537065:
             for edit_history_event in msg["edit_history"]:
                 if "prev_content" in edit_history_event:
                     content_changed = True
@@ -452,7 +462,7 @@ def index_messages(messages: List[Message], model: Any, index: Index) -> Index:
                 # else:
                 #     stream_changed = False
                 if "prev_topic" in edit_history_event:
-                    current_topic = msg["subject"]
+                    current_topic = edit_history_event["topic"]
                     previous_topic = edit_history_event["prev_topic"]
                 #     analyse_edit_histtory(
                 #         msg["id"],
