@@ -112,7 +112,6 @@ def test_index_messages_narrow_user_multiple(
     assert index_messages(messages, model, model.index) == index_user_multiple
 
 
-
 @pytest.mark.parametrize(
     "content_changed, stream_changed, current_topic, previous_topic, expected_result",
     [
