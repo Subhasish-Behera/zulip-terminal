@@ -8,13 +8,13 @@ from zulipterminal.api_types import Composition
 from zulipterminal.config.keys import primary_key_for_command
 from zulipterminal.helper import (
     Index,
+    analyse_edit_histtory,
     canonicalize_color,
     classify_unread_counts,
     display_error_if_present,
     download_media,
     get_unused_fence,
     hash_util_decode,
-    analyse_edit_histtory,
     index_messages,
     notify_if_message_sent_outside_narrow,
     open_media,
@@ -111,38 +111,105 @@ def test_index_messages_narrow_user_multiple(
     }
     assert index_messages(messages, model, model.index) == index_user_multiple
 
+
 import pytest
 
-@pytest.mark.parametrize("content_changed, stream_changed, current_topic, previous_topic, expected_result", [
-    # only stream changed
-    (False, True, "New Stream", "Old Stream", {"edited_messages": set(), "moved_messages": {12345}}),
-    # only content changed
-    (True, False, "Topic A", "Topic A", {"edited_messages": {12345}, "moved_messages": set()}),
-    # both stream and content changed
-    (True, True, "Topic B", "Topic C", {"edited_messages": {12345}, "moved_messages": set()}),
-    # topic changed
-    (False, False, "Topic D", "Topic E", {"edited_messages": set(), "moved_messages": {12345}}),
-    # topic and stream changed
-    (False, True, "Topic F", "Topic G", {"edited_messages": set(), "moved_messages": {12345}}),
-    # topic changed but only resolve/unnresolve
-    #(False, False, "✔ Topic H", "Topic H", {"edited_messages": set(), "moved_messages": {98765}}),
-    # topic changed resolve to resolve but different topic
-    (False, False, "✔ Topic I", "✔ Topic J", {"edited_messages": set(), "moved_messages": {12345}}),
-    # normal topic 1 to topic 2(both are unresolved)
-    (False, False, "Topic K", "Topic L", {"edited_messages": set(), "moved_messages": {12345}}),
-    # resolved topic to unresolved topic
-    (False, False, "✔ Topic M", "Topic M", {"edited_messages": set(), "moved_messages": set()}),
-    # unresolved topic to resolved topic
-    (False, False, "Topic M", "✔ Topic M", {"edited_messages": set(), "moved_messages": set()})
-])
-def test_analyse_edit_history(content_changed, stream_changed, current_topic, previous_topic, expected_result):
-    index = {
-        "edited_messages": set(),
-        "moved_messages": set(),
-    }
+
+@pytest.mark.parametrize(
+    "content_changed, stream_changed, current_topic, previous_topic, expected_result",
+    [
+        # only stream changed
+        (
+            False,
+            True,
+            "New Stream",
+            "Old Stream",
+            {"edited_messages": set(), "moved_messages": {12345}},
+        ),
+        # only content changed
+        (
+            True,
+            False,
+            "Topic A",
+            "Topic A",
+            {"edited_messages": {12345}, "moved_messages": set()},
+        ),
+        # both stream and content changed
+        (
+            True,
+            True,
+            "Topic B",
+            "Topic C",
+            {"edited_messages": {12345}, "moved_messages": set()},
+        ),
+        # topic changed
+        (
+            False,
+            False,
+            "Topic D",
+            "Topic E",
+            {"edited_messages": set(), "moved_messages": {12345}},
+        ),
+        # topic and stream changed
+        (
+            False,
+            True,
+            "Topic F",
+            "Topic G",
+            {"edited_messages": set(), "moved_messages": {12345}},
+        ),
+        # topic changed but only resolve/unnresolve
+        # (False, False, "✔ Topic H", "Topic H", {"edited_messages": set(), "moved_messages": {98765}}),
+        # topic changed resolve to resolve but different topic
+        (
+            False,
+            False,
+            "✔ Topic I",
+            "✔ Topic J",
+            {"edited_messages": set(), "moved_messages": {12345}},
+        ),
+        # normal topic 1 to topic 2(both are unresolved)
+        (
+            False,
+            False,
+            "Topic K",
+            "Topic L",
+            {"edited_messages": set(), "moved_messages": {12345}},
+        ),
+        # resolved topic to unresolved topic
+        (
+            False,
+            False,
+            "✔ Topic M",
+            "Topic M",
+            {"edited_messages": set(), "moved_messages": set()},
+        ),
+        # unresolved topic to resolved topic
+        (
+            False,
+            False,
+            "Topic M",
+            "✔ Topic M",
+            {"edited_messages": set(), "moved_messages": set()},
+        ),
+    ],
+)
+def test_analyse_edit_history(
+    content_changed: bool, stream_changed: bool, current_topic: str, previous_topic: str, expected_result: Dict[str, Any],initial_index: Index,
+) -> None:
+    # index = {
+    #     "edited_messages": set(),
+    #     "moved_messages": set(),
+    # }
     msg_id = 12345
-    analyse_edit_histtory(msg_id, index, content_changed, stream_changed, current_topic, previous_topic)
-    assert index == expected_result
+    expected_index = dict(initial_index, edited_messages=expected_result["edited_messages"],moved_messages=expected_result["moved_messages"])
+    print(type(expected_result))
+    analyse_edit_histtory(
+        msg_id, initial_index, content_changed, stream_changed, current_topic, previous_topic
+    )
+
+    assert initial_index == expected_index
+
 
 @pytest.mark.parametrize(
     "edited_msgs",
