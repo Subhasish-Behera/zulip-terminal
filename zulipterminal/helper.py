@@ -451,7 +451,6 @@ def index_messages(messages: List[Message], model: Any, index: Index) -> Index:
             content_changed = False
             current_topic = None
             previous_topic = None
-            if msg["id"] == 1537065:
             for edit_history_event in msg["edit_history"]:
                 if "prev_content" in edit_history_event:
                     content_changed = True

@@ -1637,7 +1637,7 @@ class Model:
                 content_changed,
                 stream_changed,
                 current_topic,
-                previous_topic
+                previous_topic,
             )
 
         # Update the rendered content, if the message is indexed
