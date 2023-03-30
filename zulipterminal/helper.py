@@ -284,9 +284,7 @@ def analyse_edit_history(
 ) -> None:
     resolve_change = False
     resolved_prefix = RESOLVED_TOPIC_PREFIX + " "
-    if content_changed:
-        index["edited_messages"].add(msg_id)
-    elif stream_changed:
+    if content_changed or stream_changed:
         index["edited_messages"].add(msg_id)
     elif old_topic:
         old_topic_resolved = old_topic.startswith(resolved_prefix)
@@ -300,15 +298,9 @@ def analyse_edit_history(
             if not old_topic_resolved and not current_topic_resolved:
                 index["moved_messages"].add(msg_id)
         else:
-            if (
-                old_topic_resolved
-                and old_topic[2:] != current_topic[2:]
-            ):
+            if old_topic_resolved and old_topic[2:] != current_topic[2:]:
                 index["moved_messages"].add(msg_id)
-            if (
-                not old_topic_resolved
-                and current_topic[2:] == old_topic
-            ):
+            if not old_topic_resolved and current_topic[2:] == old_topic:
                 resolve_change = True
     else:
         index["edited_messages"].add(msg_id)

@@ -1594,31 +1594,6 @@ class Model:
         current_topic = None
         old_topic = None
         if indexed_message:
-            # if "orig_content" in event:
-            #     self.index["edited_messages"].add(message_id)
-            # if "prev_stream" in event:
-            #     self.index["moved_messages"].add(message_id)
-            # if "subject" in event:
-            #     if not event["subject"].startswith(resolved_prefix):
-            #         if (
-            #             event["orig_subject"].startswith(resolved_prefix)
-            #             and event["orig_subject"][2:] != event["subject"]
-            #         ):
-            #             self.index["moved_messages"].add(message_id)
-            #         if not event["orig_subject"].startswith(
-            #             resolved_prefix
-            #         ) and not event["subject"].startswith(resolved_prefix):
-            #             self.index["moved_messages"].add(message_id)
-            #     else:
-            #         if (
-            #             event["orig_subject"].startswith(resolved_prefix)
-            #             and event["orig_subject"][2:] != event["subject"][2:]
-            #         ):
-            #             self.index["moved_messages"].add(message_id)
-            # else:
-            #     self.index["edited_messages"].add(message_id)
-            # if message_id not in self.index["moved_messages"]:
-            #     self.index["edited_messages"].add(message_id)
             if "prev_content" in event:
                 content_changed = True
             else:
