@@ -290,11 +290,9 @@ def analyse_edit_histtory(
         index["moved_messages"].add(msg_id)
     elif previous_topic:
         if not current_topic.startswith(resolved_topic_prefix):
-            #if previous_topic.startswith(resolved_topic_prefix) and prev
-            if (
-                previous_topic.startswith(resolved_topic_prefix)
-            ):
-                #if its not a UR to R
+            # if previous_topic.startswith(resolved_topic_prefix) and prev
+            if previous_topic.startswith(resolved_topic_prefix):
+                # if its not a UR to R
                 if previous_topic[2:] != current_topic:
                     index["moved_messages"].add(msg_id)
                 if previous_topic[2:] == current_topic:
@@ -309,9 +307,12 @@ def analyse_edit_histtory(
                 previous_topic.startswith(resolved_topic_prefix)
                 and previous_topic[2:] != current_topic[2:]
             ):
-                #current topic is R and prev topic is R and both are diffrent
+                # current topic is R and prev topic is R and both are different
                 index["moved_messages"].add(msg_id)
-            if (not previous_topic.startswith(resolved_topic_prefix) and current_topic[2:] == previous_topic):
+            if (
+                not previous_topic.startswith(resolved_topic_prefix)
+                and current_topic[2:] == previous_topic
+            ):
                 resolve_change = True
     else:
         index["edited_messages"].add(msg_id)
