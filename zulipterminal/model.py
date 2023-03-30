@@ -53,7 +53,7 @@ from zulipterminal.helper import (
     NamedEmojiData,
     StreamData,
     TidiedUserInfo,
-    analyse_edit_histtory,
+    analyse_edit_history,
     asynch,
     canonicalize_color,
     classify_unread_counts,
@@ -1592,26 +1592,26 @@ class Model:
         # message_ids = event["message_ids"]
         indexed_message = self.index["messages"].get(message_id, None)
         current_topic = None
-        previous_topic = None
+        old_topic = None
         if indexed_message:
             # if "orig_content" in event:
             #     self.index["edited_messages"].add(message_id)
             # if "prev_stream" in event:
             #     self.index["moved_messages"].add(message_id)
             # if "subject" in event:
-            #     if not event["subject"].startswith(resolved_topic_prefix):
+            #     if not event["subject"].startswith(resolved_prefix):
             #         if (
-            #             event["orig_subject"].startswith(resolved_topic_prefix)
+            #             event["orig_subject"].startswith(resolved_prefix)
             #             and event["orig_subject"][2:] != event["subject"]
             #         ):
             #             self.index["moved_messages"].add(message_id)
             #         if not event["orig_subject"].startswith(
-            #             resolved_topic_prefix
-            #         ) and not event["subject"].startswith(resolved_topic_prefix):
+            #             resolved_prefix
+            #         ) and not event["subject"].startswith(resolved_prefix):
             #             self.index["moved_messages"].add(message_id)
             #     else:
             #         if (
-            #             event["orig_subject"].startswith(resolved_topic_prefix)
+            #             event["orig_subject"].startswith(resolved_prefix)
             #             and event["orig_subject"][2:] != event["subject"][2:]
             #         ):
             #             self.index["moved_messages"].add(message_id)
@@ -1629,15 +1629,15 @@ class Model:
                 stream_changed = False
             if "subject" in event:
                 current_topic = event["subject"]
-                previous_topic = event["orig_subject"]
+                old_topic = event["orig_subject"]
 
-            analyse_edit_histtory(
+            analyse_edit_history(
                 message_id,
                 self.index,
                 content_changed,
                 stream_changed,
                 current_topic,
-                previous_topic,
+                old_topic,
             )
 
         # Update the rendered content, if the message is indexed

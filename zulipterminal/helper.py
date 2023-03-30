@@ -274,44 +274,40 @@ def set_count(id_list: List[int], controller: Any, new_count: int) -> None:
     controller.update_screen()
 
 
-def analyse_edit_histtory(
+def analyse_edit_history(
     msg_id: int,
     index: Index,
     content_changed: bool,
     stream_changed: bool,
     current_topic: Any = None,
-    previous_topic: Any = None,
+    old_topic: Any = None,
 ) -> None:
     resolve_change = False
-    resolved_topic_prefix = RESOLVED_TOPIC_PREFIX + " "
+    resolved_prefix = RESOLVED_TOPIC_PREFIX + " "
     if content_changed:
         index["edited_messages"].add(msg_id)
     elif stream_changed:
-        index["moved_messages"].add(msg_id)
-    elif previous_topic:
-        if not current_topic.startswith(resolved_topic_prefix):
-            # if previous_topic.startswith(resolved_topic_prefix) and prev
-            if previous_topic.startswith(resolved_topic_prefix):
-                # if its not a UR to R
-                if previous_topic[2:] != current_topic:
+        index["edited_messages"].add(msg_id)
+    elif old_topic:
+        old_topic_resolved = old_topic.startswith(resolved_prefix)
+        current_topic_resolved = current_topic.startswith(resolved_prefix)
+        if not current_topic_resolved:
+            if old_topic_resolved:
+                if old_topic[2:] != current_topic:
                     index["moved_messages"].add(msg_id)
-                if previous_topic[2:] == current_topic:
+                if old_topic[2:] == current_topic:
                     resolve_change = True
-            if not previous_topic.startswith(
-                resolved_topic_prefix
-            ) and not current_topic.startswith(resolved_topic_prefix):
-                # if both are UR
+            if not old_topic_resolved and not current_topic_resolved:
                 index["moved_messages"].add(msg_id)
         else:
             if (
-                previous_topic.startswith(resolved_topic_prefix)
-                and previous_topic[2:] != current_topic[2:]
+                old_topic_resolved
+                and old_topic[2:] != current_topic[2:]
             ):
-                # current topic is R and prev topic is R and both are different
                 index["moved_messages"].add(msg_id)
             if (
-                not previous_topic.startswith(resolved_topic_prefix)
-                and current_topic[2:] == previous_topic
+                not old_topic_resolved
+                and current_topic[2:] == old_topic
             ):
                 resolve_change = True
     else:
@@ -451,7 +447,7 @@ def index_messages(messages: List[Message], model: Any, index: Index) -> Index:
             stream_changed = False
             content_changed = False
             current_topic = None
-            previous_topic = None
+            old_topic = None
             for edit_history_event in msg["edit_history"]:
                 if "prev_content" in edit_history_event:
                     content_changed = True
@@ -463,27 +459,27 @@ def index_messages(messages: List[Message], model: Any, index: Index) -> Index:
                 #     stream_changed = False
                 if "prev_topic" in edit_history_event:
                     current_topic = edit_history_event["topic"]
-                    previous_topic = edit_history_event["prev_topic"]
-                #     analyse_edit_histtory(
+                    old_topic = edit_history_event["prev_topic"]
+                #     analyse_edit_history(
                 #         msg["id"],
                 #         index,
                 #         content_changed,
                 #         stream_changed,
                 #         current_topic,
-                #         previous_topic,
+                #         old_topic,
                 #     )
                 # else:
                 #     print("p")
-                #     analyse_edit_histtory(
+                #     analyse_edit_history(
                 #         msg["id"], index, content_changed, stream_changed
                 #     )
-            analyse_edit_histtory(
+            analyse_edit_history(
                 msg["id"],
                 index,
                 content_changed,
                 stream_changed,
                 current_topic,
-                previous_topic,
+                old_topic,
             )
             # for edit_history_event in msg["edit_history"]:
             #     if "prev_content" in edit_history_event:
@@ -494,26 +490,26 @@ def index_messages(messages: List[Message], model: Any, index: Index) -> Index:
             #         # We know it has a topic edit. Now we need to determine if
             #         # it was a true move or a resolve/unresolve.
             #         if not edit_history_event["topic"].startswith(
-            #             resolved_topic_prefix
+            #             resolved_prefix
             #         ):
             #             if (
             #                 edit_history_event["prev_topic"].startswith(
-            #                     resolved_topic_prefix
+            #                     resolved_prefix
             #                 )
             #                 and edit_history_event["prev_topic"][2:]
             #                 != edit_history_event["topic"]
             #             ):
             #                 index["moved_messages"].add(msg["id"])
             #             if not edit_history_event["prev_topic"].startswith(
-            #                 resolved_topic_prefix
+            #                 resolved_prefix
             #             ) and not edit_history_event["topic"].startswith(
-            #                 resolved_topic_prefix
+            #                 resolved_prefix
             #             ):
             #                 index["moved_messages"].add(msg["id"])
             #         else:
             #             if (
             #                 edit_history_event["prev_topic"].startswith(
-            #                     resolved_topic_prefix
+            #                     resolved_prefix
             #                 )
             #                 and edit_history_event["prev_topic"][2:]
             #                 != edit_history_event["topic"][2:]
