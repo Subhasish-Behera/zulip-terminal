@@ -112,8 +112,6 @@ def test_index_messages_narrow_user_multiple(
     assert index_messages(messages, model, model.index) == index_user_multiple
 
 
-import pytest
-
 
 @pytest.mark.parametrize(
     "content_changed, stream_changed, current_topic, previous_topic, expected_result",
@@ -159,7 +157,8 @@ import pytest
             {"edited_messages": set(), "moved_messages": {12345}},
         ),
         # topic changed but only resolve/unnresolve
-        # (False, False, "✔ Topic H", "Topic H", {"edited_messages": set(), "moved_messages": {98765}}),
+        # (False, False, "✔ Topic H", "Topic H", {
+        # "edited_messages": set(), "moved_messages": {98765}}),
         # topic changed resolve to resolve but different topic
         (
             False,
@@ -195,17 +194,30 @@ import pytest
     ],
 )
 def test_analyse_edit_history(
-    content_changed: bool, stream_changed: bool, current_topic: str, previous_topic: str, expected_result: Dict[str, Any],initial_index: Index,
+    content_changed: bool,
+    stream_changed: bool,
+    current_topic: str,
+    previous_topic: str,
+    expected_result: Dict[str, Any],
+    initial_index: Index,
 ) -> None:
     # index = {
     #     "edited_messages": set(),
     #     "moved_messages": set(),
     # }
     msg_id = 12345
-    expected_index = dict(initial_index, edited_messages=expected_result["edited_messages"],moved_messages=expected_result["moved_messages"])
-    print(type(expected_result))
+    expected_index = dict(
+        initial_index,
+        edited_messages=expected_result["edited_messages"],
+        moved_messages=expected_result["moved_messages"],
+    )
     analyse_edit_histtory(
-        msg_id, initial_index, content_changed, stream_changed, current_topic, previous_topic
+        msg_id,
+        initial_index,
+        content_changed,
+        stream_changed,
+        current_topic,
+        previous_topic,
     )
 
     assert initial_index == expected_index
