@@ -43,6 +43,7 @@ class View(urwid.WidgetWrap):
         self.unpinned_streams = self.model.unpinned_streams
         self.write_box = WriteBox(self)
         self.search_box = MessageSearchBox(self.controller)
+        self.stream_topic_map = {}
 
         self.message_view: Any = None
         self.displaying_selection_hint = False

@@ -310,6 +310,8 @@ class StreamsView(urwid.Frame):
         self.view = view
         self.log = urwid.SimpleFocusListWalker(streams_btn_list)
         self.streams_btn_list = streams_btn_list
+        for stream_btn in streams_btn_list:
+            self.view.stream_topic_map[stream_btn.stream_id] = None
         self.focus_index_before_search = 0
         list_box = urwid.ListBox(self.log)
         self.stream_search_box = PanelSearchBox(
@@ -420,6 +422,15 @@ class TopicsView(urwid.Frame):
         self.header_list = urwid.Pile(
             [self.stream_button, urwid.Divider("─"), self.topic_search_box]
         )
+        if (
+            self.view.stream_topic_map[self.stream_button.stream_id] is not None
+        ):
+            for i, topic in enumerate(self.log):
+                if (
+                    topic.topic_name
+                    is self.view.stream_topic_map[self.stream_button.stream_id]
+                ):
+                    self.list_box.set_focus(i)
         super().__init__(
             self.list_box,
             header=urwid.LineBox(
