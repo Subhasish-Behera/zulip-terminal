@@ -422,9 +422,7 @@ class TopicsView(urwid.Frame):
         self.header_list = urwid.Pile(
             [self.stream_button, urwid.Divider("─"), self.topic_search_box]
         )
-        if (
-            self.view.stream_topic_map[self.stream_button.stream_id] is not None
-        ):
+        if self.view.stream_topic_map[self.stream_button.stream_id] is not None:
             for i, topic in enumerate(self.log):
                 if (
                     topic.topic_name
