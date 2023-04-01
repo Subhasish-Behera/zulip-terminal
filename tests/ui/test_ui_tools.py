@@ -479,6 +479,8 @@ class TestStreamsView:
         stream_btn = mocker.Mock()
         stream_btn.stream_name = "FOO"
         self.streams_btn_list = [stream_btn]
+        stream_topic_map = mocker.MagicMock(spec=dict)
+        self.view.stream_topic_map = stream_topic_map
         return StreamsView(self.streams_btn_list, view=self.view)
 
     def test_init(self, mocker, stream_view):
@@ -594,6 +596,8 @@ class TestTopicsView:
         topic_btn = mocker.Mock()
         topic_btn.caption = "BOO"
         self.topics_btn_list = [topic_btn]
+        stream_topic_map = mocker.MagicMock(spec=dict)
+        self.view.stream_topic_map = stream_topic_map
         self.header_list = mocker.patch(VIEWS + ".urwid.Pile")
         self.divider = mocker.patch(VIEWS + ".urwid.Divider")
         return TopicsView(self.topics_btn_list, self.view, self.stream_button)
