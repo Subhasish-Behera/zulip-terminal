@@ -422,6 +422,7 @@ class TopicsView(urwid.Frame):
         self.header_list = urwid.Pile(
             [self.stream_button, urwid.Divider("─"), self.topic_search_box]
         )
+        self._set_initial_focus()
         super().__init__(
             self.list_box,
             header=urwid.LineBox(
@@ -438,6 +439,16 @@ class TopicsView(urwid.Frame):
         )
         self.search_lock = threading.Lock()
         self.empty_search = False
+
+    def _set_initial_focus(self) -> None:
+        if self.view.stream_topic_map[self.stream_button.stream_id] is not None:
+            for i, topic in enumerate(self.log):
+                if (
+                    topic.topic_name
+                    is self.view.stream_topic_map[self.stream_button.stream_id]
+                ):
+                    self.list_box.focus_position = i
+                    break
 
     @asynch
     def update_topics(self, search_box: Any, new_text: str) -> None:
