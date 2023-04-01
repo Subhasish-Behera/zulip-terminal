@@ -625,12 +625,10 @@ class TestTopicsView:
             "topic_is_stored_but_not_present_in_topic_list",
         ],
     )
-    def test__set_initial_focus(self, mocker, stream_id,topic_view,expected_focus_index):
-        topic_view.view.stream_topic_map = {
-            1: None,
-            2: "Topic 3",
-            3: "Topic 4"
-        }
+    def test__set_initial_focus(
+        self, mocker, stream_id, topic_view, expected_focus_index
+    ):
+        topic_view.view.stream_topic_map = {1: None, 2: "Topic 3", 3: "Topic 4"}
         topic_view.stream_button.stream_id = stream_id
         topic_view.list_box = mocker.MagicMock(spec=urwid.ListBox)
         topic_view.list_box.body = [
@@ -638,7 +636,7 @@ class TestTopicsView:
             mocker.Mock(topic_name="Topic 2"),
             mocker.Mock(topic_name="Topic 3"),
         ]
-        topic_view.log= urwid.SimpleFocusListWalker(topic_view.list_box.body)
+        topic_view.log = urwid.SimpleFocusListWalker(topic_view.list_box.body)
         topic_view.list_box.focus_position = 0
         topic_view._set_initial_focus()
         assert topic_view.list_box.focus_position == expected_focus_index

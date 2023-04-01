@@ -1283,6 +1283,7 @@ class Model:
                                         pinning/unpinning streams)
         """
         assert event["type"] == "subscription"
+
         def get_stream_by_id(streams: List[StreamData], stream_id: int) -> StreamData:
             for stream in streams:
                 if stream["id"] == stream_id:

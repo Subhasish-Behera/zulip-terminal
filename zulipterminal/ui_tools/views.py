@@ -444,8 +444,8 @@ class TopicsView(urwid.Frame):
         if self.view.stream_topic_map[self.stream_button.stream_id] is not None:
             for i, topic in enumerate(self.log):
                 if (
-                        topic.topic_name
-                        is self.view.stream_topic_map[self.stream_button.stream_id]
+                    topic.topic_name
+                    is self.view.stream_topic_map[self.stream_button.stream_id]
                 ):
                     self.list_box.focus_position = i
                     break
