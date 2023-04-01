@@ -520,6 +520,8 @@ class TestTopicButton:
     ) -> None:
         size = widget_size(topic_button)
         topic_button.view.left_panel = mocker.Mock()
+        stream_topic_map = mocker.MagicMock(spec=dict)
+        topic_button.view.stream_topic_map = stream_topic_map
         topic_button.keypress(size, key)
         topic_button.view.left_panel.show_stream_view.assert_called_once_with()
 
