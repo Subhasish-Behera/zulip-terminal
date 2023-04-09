@@ -143,6 +143,7 @@ class Model:
 
         # Events desired with their corresponding callback
         self.event_actions: Dict[str, Callable[[Event], None]] = {
+            "alert_words": self._handle_alert_words_event,
             "message": self._handle_message_event,
             "update_message": self._handle_update_message_event,
             "reaction": self._handle_reaction_event,
