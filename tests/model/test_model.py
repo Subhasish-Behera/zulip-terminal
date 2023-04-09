@@ -227,6 +227,7 @@ class TestModel:
         model = Model(self.controller)
 
         event_types = [
+            "alert_words",
             "message",
             "update_message",
             "reaction",
@@ -2622,6 +2623,49 @@ class TestModel:
     )
     def update_message_flags_operation(self, request):
         return request.param
+
+    @pytest.mark.parametrize(
+        "event,initial_alerted_words, expected_alert_words",
+        [
+            case(
+                {"type": "alert_words", "alert_words": ["word1", "word2", "word3"]},
+                ["word1"],
+                ["word1", "word2", "word3"],
+                id="Add multiple alert words",
+            ),
+            case(
+                {"type": "alert_words", "alert_words": []},
+                ["word1"],
+                [],
+                id="Empty alert words",
+            ),
+            case(
+                {"type": "alert_words", "alert_words": ["word1", "word4"]},
+                ["word1"],
+                ["word1", "word4"],
+                id="Add single new alert words",
+            ),
+            case(
+                {"type": "alert_words", "alert_words": ["word1", "word2"]},
+                ["word1", "word2", "word3"],
+                ["word1", "word2"],
+                id="Delete an alert word",
+            ),
+            case(
+                {"type": "alert_words", "alert_words": ["word1", "word3"]},
+                ["word1", "word2"],
+                ["word1", "word3"],
+                id="Add and delete alert words",
+            ),
+        ],
+    )
+    def test__handle_alert_words_event(
+        self, mocker, model, event, initial_alerted_words, expected_alert_words
+    ):
+        model._handle_alert_words_event(event)
+
+        assert model._alert_words != initial_alerted_words
+        assert model._alert_words == expected_alert_words
 
     def test_update_star_status_no_index(
         self, mocker, model, update_message_flags_operation

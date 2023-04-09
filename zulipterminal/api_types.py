@@ -344,6 +344,11 @@ class UpdateGlobalNotificationsEvent(TypedDict):
     setting: Any
 
 
+class AlertWordEvent(TypedDict):
+    type: Literal["alert_words"]
+    alert_words: List[str]
+
+
 Event = Union[
     MessageEvent,
     UpdateMessageEvent,
@@ -356,6 +361,7 @@ Event = Union[
     UpdateUserSettingsEvent,
     UpdateGlobalNotificationsEvent,
     RealmUserEvent,
+    AlertWordEvent,
 ]
 
 ###############################################################################
