@@ -178,8 +178,7 @@ class Model:
         self.visual_notified_streams: Set[int] = set()
 
         self._subscribe_to_streams(self.initial_data["subscriptions"])
-
-        self._alert_words = self.initial_data.get("alert_words", None)
+        self._alert_words: List[str] = self.initial_data["alert_words"]
 
         # NOTE: The date_created field of stream has been added in feature
         # level 30, server version 4. For consistency we add this field
