@@ -895,6 +895,7 @@ class WriteBox(urwid.Pile):
                     else:
                         header.focus_col = self.FOCUS_HEADER_BOX_STREAM
                 else:
+                    print("hii1")
                     all_valid = self._tidy_valid_recipients_and_notify_invalid_ones(
                         self.to_write_box
                     )
@@ -916,6 +917,7 @@ class WriteBox(urwid.Pile):
                     self.compose_box_status == "open_with_private"
                     and (self.edit_keypressed and self.reply_keypressed) is not True
                 ):
+                    print("hii2")
                     self.focus_position = self.FOCUS_CONTAINER_HEADER
             if self.compose_box_status == "open_with_stream":
                 if self.msg_edit_state is not None:
@@ -923,7 +925,10 @@ class WriteBox(urwid.Pile):
                 else:
                     header.focus_col = self.FOCUS_HEADER_BOX_STREAM
             else:
+                print("edit_keypressed", self.edit_keypressed)
+                print("reply_keypressed", self.reply_keypressed)
                 if (self.edit_keypressed and self.reply_keypressed) is True:
+                    print("hii3")
                     self.model.controller.report_error(
                         [" Recipient(s) can not be edited while editing a PM."]
                     )
