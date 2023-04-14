@@ -84,13 +84,13 @@ class WriteBox(urwid.Pile):
 
         # Marks if the write box formed is involves [EDIT_MESSAGE: e] key
         # Only used for private messages(for now)
-        self.edit_keypressed: bool
-        self.edit_keypressed = False
+        # self.edit_keypressed: bool
+        # self.edit_keypressed = False
 
         # Marks if the write box formed is involves [REPLY_MESSAGE: r] key
         # Only used for private messages(for now)
-        self.reply_keypressed: bool
-        self.reply_keypressed = False
+        # self.reply_keypressed: bool
+        # self.reply_keypressed = False
         # Updates server on PM typing events
         # Is separate from recipient_user_ids because we
         # don't include the user's own id in this list
@@ -183,11 +183,7 @@ class WriteBox(urwid.Pile):
             self.idle_status_tracking = False
             self.sent_start_typing_status = False
 
-    def private_box_view(
-        self,
-        *,
-        recipient_user_ids: Optional[List[int]] = None,
-    ) -> None:
+    def _setup_common_private_compose(self,recipient_user_ids):
         self.set_editor_mode()
 
         self.compose_box_status = "open_with_private"
@@ -209,14 +205,6 @@ class WriteBox(urwid.Pile):
             self.recipient_emails = []
             recipient_info = ""
 
-        self.send_next_typing_update = datetime.now()
-        self.to_write_box = ReadlineEdit("To: ", edit_text=recipient_info)
-        self.to_write_box.enable_autocomplete(
-            func=self._to_box_autocomplete,
-            key=primary_key_for_command("AUTOCOMPLETE"),
-            key_reverse=primary_key_for_command("AUTOCOMPLETE_REVERSE"),
-        )
-        self.to_write_box.set_completer_delims("")
 
         self.msg_write_box = ReadlineEdit(
             multiline=True, max_char=self.model.max_message_length
@@ -245,6 +233,28 @@ class WriteBox(urwid.Pile):
             (self.msg_write_box, self.options()),
         ]
         self.focus_position = self.FOCUS_CONTAINER_MESSAGE
+        return recipient_info
+    def private_box_edit_view(self,recepient_user_ids):
+        recipient_info = self._setup_common_private_compose(recepient_user_ids)
+        self.to_write_box = urwid.Text("To: " + recipient_info)
+        self.to_write_box.set_completer_delims("")
+
+
+
+    def private_box_view(
+        self,
+        *,
+        recipient_user_ids: Optional[List[int]] = None,
+    ) -> None:
+        recipient_info = self._setup_common_private_compose(recipient_user_ids)
+        self.send_next_typing_update = datetime.now()
+        self.to_write_box = ReadlineEdit("To: ", edit_text=recipient_info)
+        self.to_write_box.enable_autocomplete(
+            func=self._to_box_autocomplete,
+            key=primary_key_for_command("AUTOCOMPLETE"),
+            key_reverse=primary_key_for_command("AUTOCOMPLETE_REVERSE"),
+        )
+        self.to_write_box.set_completer_delims("")
 
         start_period_delta = timedelta(seconds=TYPING_STARTED_WAIT_PERIOD)
         stop_period_delta = timedelta(seconds=TYPING_STOPPED_WAIT_PERIOD)
@@ -329,6 +339,7 @@ class WriteBox(urwid.Pile):
     def _setup_common_stream_compose(
         self, stream_id: int, caption: str, title: str
     ) -> None:
+        print("2")
         self.set_editor_mode()
         self.compose_box_status = "open_with_stream"
         self.stream_id = stream_id
@@ -338,6 +349,7 @@ class WriteBox(urwid.Pile):
         self.msg_write_box = ReadlineEdit(
             multiline=True, max_char=self.model.max_message_length
         )
+        print(self.msg_write_box)
         self.msg_write_box.enable_autocomplete(
             func=self.generic_autocomplete,
             key=primary_key_for_command("AUTOCOMPLETE"),
@@ -346,7 +358,7 @@ class WriteBox(urwid.Pile):
         self.msg_write_box.set_completer_delims(DELIMS_MESSAGE_COMPOSE)
 
         self.title_write_box = ReadlineEdit(
-            edit_text=title, max_char=self.model.max_topic_length
+            edit_text=title+"io", max_char=self.model.max_topic_length
         )
         self.title_write_box.enable_autocomplete(
             func=self._topic_box_autocomplete,
@@ -385,8 +397,9 @@ class WriteBox(urwid.Pile):
     def stream_box_view(
         self, stream_id: int, caption: str = "", title: str = ""
     ) -> None:
+        print("1")
         self.stream_write_box = ReadlineEdit(
-            edit_text=caption, max_char=self.model.max_stream_name_length
+            edit_text=caption+"hii", max_char=self.model.max_stream_name_length
         )
         self.stream_write_box.enable_autocomplete(
             func=self._stream_box_autocomplete,
@@ -405,6 +418,7 @@ class WriteBox(urwid.Pile):
     def stream_box_edit_view(
         self, stream_id: int, caption: str = "", title: str = ""
     ) -> None:
+        print("3")
         self.stream_write_box = urwid.Text(caption)
         self._setup_common_stream_compose(stream_id, caption, title)
 
@@ -418,6 +432,7 @@ class WriteBox(urwid.Pile):
         self._set_stream_write_box_style(None, caption)
 
     def _set_stream_write_box_style(self, widget: ReadlineEdit, new_text: str) -> None:
+        print("4")
         # FIXME: Refactor when we have ~ Model.is_private_stream
         stream_marker = INVALID_MARKER
         color = "general_bar"
@@ -915,7 +930,7 @@ class WriteBox(urwid.Pile):
                     self.focus_position = self.FOCUS_CONTAINER_HEADER
                 if (
                     self.compose_box_status == "open_with_private"
-                    and (self.edit_keypressed and self.reply_keypressed) is not True
+                    and self.msg_edit_state is not True
                 ):
                     print("hii2")
                     self.focus_position = self.FOCUS_CONTAINER_HEADER
@@ -925,9 +940,9 @@ class WriteBox(urwid.Pile):
                 else:
                     header.focus_col = self.FOCUS_HEADER_BOX_STREAM
             else:
-                print("edit_keypressed", self.edit_keypressed)
-                print("reply_keypressed", self.reply_keypressed)
-                if (self.edit_keypressed and self.reply_keypressed) is True:
+                # print("edit_keypressed", self.edit_keypressed)
+                # print("reply_keypressed", self.reply_keypressed)
+                if self.msg_edit_state:
                     print("hii3")
                     self.model.controller.report_error(
                         [" Recipient(s) can not be edited while editing a PM."]
