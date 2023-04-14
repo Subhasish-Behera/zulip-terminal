@@ -891,7 +891,7 @@ class MessageBox(urwid.Pile):
 
     def keypress(self, size: urwid_Size, key: str) -> Optional[str]:
         if is_command_key("REPLY_MESSAGE", key):
-            self.model.controller.view.write_box.reply_keypressed = True
+            # self.model.controller.view.write_box.reply_keypressed = True
             if self.message["type"] == "private":
                 self.model.controller.view.write_box.private_box_view(
                     recipient_user_ids=self.recipient_ids,
@@ -1006,7 +1006,7 @@ class MessageBox(urwid.Pile):
             # User can't edit messages of others that already have a subject
             # For private messages, subject = "" (empty string)
             # This also handles the realm_message_content_edit_limit_seconds == 0 case
-            self.model.controller.view.write_box.edit_keypressed = True
+           #
             if (
                 self.message["sender_id"] != self.model.user_id
                 and self.message["subject"] != "(no topic)"
@@ -1084,7 +1084,10 @@ class MessageBox(urwid.Pile):
                     )
 
             if self.message["type"] == "private":
-                self.keypress(size, primary_key_for_command("REPLY_MESSAGE"))
+                #self.keypress(size, primary_key_for_command("REPLY_MESSAGE"))
+                self.model.controller.view.write_box.private_box_edit_view(
+                    recipient_user_ids=self.recipient_ids,
+                )
             elif self.message["type"] == "stream":
                 self.model.controller.view.write_box.stream_box_edit_view(
                     stream_id=self.stream_id,
