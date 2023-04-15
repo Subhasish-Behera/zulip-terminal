@@ -294,7 +294,8 @@ class TestWriteBox:
         "key",
         keys_for_command("SEND_MESSAGE")
         + keys_for_command("SAVE_AS_DRAFT")
-        + keys_for_command("CYCLE_COMPOSE_FOCUS"),
+        +
+         keys_for_command("CYCLE_COMPOSE_FOCUS"),
     )
     def test_tidying_recipients_on_keypresses(
         self,
@@ -1498,6 +1499,7 @@ class TestWriteBox:
             "box_type",
             "msg_body_edit_enabled",
             "message_being_edited",
+            "recipient_box_editable",
             "expected_focus_name",
             "expected_focus_col_name",
         ],
@@ -1507,6 +1509,7 @@ class TestWriteBox:
                 "HEADER_BOX_STREAM",
                 "stream",
                 True,
+                False,
                 False,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_TOPIC",
@@ -1518,6 +1521,7 @@ class TestWriteBox:
                 "stream",
                 True,
                 False,
+                False,
                 "CONTAINER_MESSAGE",
                 "MESSAGE_BOX_BODY",
                 id="topic_to_message_box",
@@ -1528,6 +1532,7 @@ class TestWriteBox:
                 "stream",
                 False,
                 True,
+                False,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_EDIT",
                 id="topic_edit_only-topic_to_edit_mode_box",
@@ -1538,6 +1543,7 @@ class TestWriteBox:
                 "stream",
                 False,
                 True,
+                False,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_TOPIC",
                 id="topic_edit_only-edit_mode_to_topic_box",
@@ -1547,6 +1553,7 @@ class TestWriteBox:
                 "MESSAGE_BOX_BODY",
                 "stream",
                 True,
+                False,
                 False,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_STREAM",
@@ -1558,6 +1565,7 @@ class TestWriteBox:
                 "stream",
                 True,
                 True,
+                False,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_TOPIC",
                 id="edit_box-stream_name_to_topic_box",
@@ -1568,6 +1576,7 @@ class TestWriteBox:
                 "stream",
                 True,
                 True,
+                False,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_EDIT",
                 id="edit_box-topic_to_edit_mode_box",
@@ -1578,6 +1587,7 @@ class TestWriteBox:
                 "stream",
                 True,
                 True,
+                False,
                 "CONTAINER_MESSAGE",
                 "MESSAGE_BOX_BODY",
                 id="edit_box-edit_mode_to_message_box",
@@ -1588,6 +1598,7 @@ class TestWriteBox:
                 "stream",
                 True,
                 True,
+                False,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_TOPIC",
                 id="edit_box-message_to_stream_name_box",
@@ -1597,6 +1608,18 @@ class TestWriteBox:
                 "HEADER_BOX_RECIPIENT",
                 "private",
                 True,
+                False,
+                True,
+                "CONTAINER_MESSAGE",
+                "MESSAGE_BOX_BODY",
+                id="recipient_to_message_box",
+            ),
+            case(
+                "CONTAINER_HEADER",
+                "HEADER_BOX_RECIPIENT",
+                "private",
+                True,
+                False,
                 False,
                 "CONTAINER_MESSAGE",
                 "MESSAGE_BOX_BODY",
@@ -1608,10 +1631,22 @@ class TestWriteBox:
                 "private",
                 True,
                 False,
+                True,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_RECIPIENT",
                 id="message_to_recipient_box",
             ),
+            case(
+                "CONTAINER_MESSAGE",
+                "MESSAGE_BOX_BODY",
+                "private",
+                True,
+                False,
+                False,
+                "CONTAINER_HEADER",
+                "HEADER_BOX_RECIPIENT",
+                id="edit_message_no_change",
+            )
         ],
     )
     @pytest.mark.parametrize("tab_key", keys_for_command("CYCLE_COMPOSE_FOCUS"))
@@ -1625,6 +1660,7 @@ class TestWriteBox:
         expected_focus_col_name: str,
         box_type: str,
         msg_body_edit_enabled: bool,
+        recipient_box_editable: bool,
         message_being_edited: bool,
         widget_size: Callable[[Widget], urwid_Size],
         mocker: MockerFixture,
@@ -1642,7 +1678,10 @@ class TestWriteBox:
             else:
                 write_box.stream_box_view(stream_id)
         else:
-            write_box.private_box_view()
+            if recipient_box_editable:
+                write_box.private_box_view()
+            else:
+                write_box.private_box_edit_view()
         size = widget_size(write_box)
 
         def focus_val(x: str) -> int:
@@ -1667,6 +1706,25 @@ class TestWriteBox:
             assert write_box.FOCUS_MESSAGE_BOX_BODY == focus_val(  # noqa: SIM300
                 expected_focus_col_name
             )
+
+    @pytest.mark.parametrize(
+    "recipient_user_ids, expected_recipient_emails, expected_recipient_info",
+    [
+        ([11, 12], ["person1@example.com", "person2@example.com"], "Human 1 <person1@example.com>, Human 2 <person2@example.com>"),
+        ([11], ["person1@example.com"], "Human 1 <person1@example.com>"),
+        ([], [], ""),
+    ],
+)
+    def test_convert_id_to_info(self,recipient_user_ids: List[int], expected_recipient_emails: List[str], expected_recipient_info: str,user_dict: List[Dict[str, Any]],user_id_email_dict: Dict[int, str]) -> None:
+        write_box = WriteBox(self.view)
+        write_box.model.user_id_email_dict: Dict[int, str] = user_id_email_dict
+        write_box.model.user_dict: List[Dict[str, Any]] = user_dict
+
+        write_box.convert_id_to_info(recipient_user_ids)
+
+        assert write_box.recipient_emails == expected_recipient_emails
+        assert write_box.recipient_info == expected_recipient_info
+    # Create a mock for the model used by WriteBox
 
     @pytest.mark.parametrize("key", keys_for_command("MARKDOWN_HELP"))
     def test_keypress_MARKDOWN_HELP(
