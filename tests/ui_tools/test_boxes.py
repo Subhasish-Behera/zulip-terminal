@@ -294,8 +294,7 @@ class TestWriteBox:
         "key",
         keys_for_command("SEND_MESSAGE")
         + keys_for_command("SAVE_AS_DRAFT")
-        +
-         keys_for_command("CYCLE_COMPOSE_FOCUS"),
+        + keys_for_command("CYCLE_COMPOSE_FOCUS"),
     )
     def test_tidying_recipients_on_keypresses(
         self,
@@ -1623,7 +1622,7 @@ class TestWriteBox:
                 False,
                 "CONTAINER_MESSAGE",
                 "MESSAGE_BOX_BODY",
-                id="recipient_to_message_box",
+                id="edit-recipient_to_message_box",
             ),
             case(
                 "CONTAINER_MESSAGE",
@@ -1646,7 +1645,7 @@ class TestWriteBox:
                 "CONTAINER_HEADER",
                 "HEADER_BOX_RECIPIENT",
                 id="edit_message_no_change",
-            )
+            ),
         ],
     )
     @pytest.mark.parametrize("tab_key", keys_for_command("CYCLE_COMPOSE_FOCUS"))
@@ -1682,6 +1681,7 @@ class TestWriteBox:
                 write_box.private_box_view()
             else:
                 write_box.private_box_edit_view()
+        print(write_box.msg_edit_state)
         size = widget_size(write_box)
 
         def focus_val(x: str) -> int:
@@ -1708,22 +1708,34 @@ class TestWriteBox:
             )
 
     @pytest.mark.parametrize(
-    "recipient_user_ids, expected_recipient_emails, expected_recipient_info",
-    [
-        ([11, 12], ["person1@example.com", "person2@example.com"], "Human 1 <person1@example.com>, Human 2 <person2@example.com>"),
-        ([11], ["person1@example.com"], "Human 1 <person1@example.com>"),
-        ([], [], ""),
-    ],
-)
-    def test_convert_id_to_info(self,recipient_user_ids: List[int], expected_recipient_emails: List[str], expected_recipient_info: str,user_dict: List[Dict[str, Any]],user_id_email_dict: Dict[int, str]) -> None:
+        "recipient_user_ids, expected_recipient_emails, expected_recipient_info",
+        [
+            (
+                [11, 12],
+                ["person1@example.com", "person2@example.com"],
+                "Human 1 <person1@example.com>, Human 2 <person2@example.com>",
+            ),
+            ([11], ["person1@example.com"], "Human 1 <person1@example.com>"),
+            ([], [], ""),
+        ],
+    )
+    def test_convert_id_to_info(
+        self,
+        recipient_user_ids: List[int],
+        expected_recipient_emails: List[str],
+        expected_recipient_info: str,
+        user_dict: List[Dict[str, Any]],
+        user_id_email_dict: Dict[int, str],
+    ) -> None:
         write_box = WriteBox(self.view)
-        write_box.model.user_id_email_dict: Dict[int, str] = user_id_email_dict
-        write_box.model.user_dict: List[Dict[str, Any]] = user_dict
+        write_box.model.user_id_email_dict = user_id_email_dict
+        write_box.model.user_dict = user_dict
 
         write_box.convert_id_to_info(recipient_user_ids)
 
         assert write_box.recipient_emails == expected_recipient_emails
         assert write_box.recipient_info == expected_recipient_info
+
     # Create a mock for the model used by WriteBox
 
     @pytest.mark.parametrize("key", keys_for_command("MARKDOWN_HELP"))
