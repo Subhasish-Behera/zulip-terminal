@@ -82,15 +82,6 @@ class WriteBox(urwid.Pile):
         # Prioritizes autocomplete in message body
         self.recipient_user_ids: List[int]
 
-        # Marks if the write box formed is involves [EDIT_MESSAGE: e] key
-        # Only used for private messages(for now)
-        # self.edit_keypressed: bool
-        # self.edit_keypressed = False
-
-        # Marks if the write box formed is involves [REPLY_MESSAGE: r] key
-        # Only used for private messages(for now)
-        # self.reply_keypressed: bool
-        # self.reply_keypressed = False
         # Updates server on PM typing events
         # Is separate from recipient_user_ids because we
         # don't include the user's own id in this list
@@ -131,8 +122,6 @@ class WriteBox(urwid.Pile):
         self.stream_id = None
         self.to_write_box = None
 
-        self.edit_keypressed = False
-        self.reply_keypressed = False
         # Maintain synchrony between *_user_ids by setting them
         # to empty lists together using the helper method.
         self._set_regular_and_typing_recipient_user_ids(None)
@@ -183,8 +172,42 @@ class WriteBox(urwid.Pile):
             self.idle_status_tracking = False
             self.sent_start_typing_status = False
 
+    def _setup_common_private_compose(self) -> None:
+        self.set_editor_mode()
 
-    def convert_id_to_info(self,recipient_user_ids: Optional[List[int]] = None) -> None:
+        self.compose_box_status = "open_with_private"
+
+        self.msg_write_box = ReadlineEdit(
+            multiline=True, max_char=self.model.max_message_length
+        )
+        self.msg_write_box.enable_autocomplete(
+            func=self.generic_autocomplete,
+            key=primary_key_for_command("AUTOCOMPLETE"),
+            key_reverse=primary_key_for_command("AUTOCOMPLETE_REVERSE"),
+        )
+        self.msg_write_box.set_completer_delims(DELIMS_MESSAGE_COMPOSE)
+
+        self.header_write_box = urwid.Columns([self.to_write_box])
+        header_line_box = urwid.LineBox(
+            self.header_write_box,
+            tlcorner="━",
+            tline="━",
+            trcorner="━",
+            lline="",
+            blcorner="─",
+            bline="─",
+            brcorner="─",
+            rline="",
+        )
+        self.contents = [
+            (header_line_box, self.options()),
+            (self.msg_write_box, self.options()),
+        ]
+        self.focus_position = self.FOCUS_CONTAINER_MESSAGE
+
+    def convert_id_to_info(
+        self, recipient_user_ids: Optional[List[int]] = None
+    ) -> None:
         if recipient_user_ids:
             self._set_regular_and_typing_recipient_user_ids(recipient_user_ids)
             self.recipient_emails = [
@@ -201,11 +224,15 @@ class WriteBox(urwid.Pile):
             self._set_regular_and_typing_recipient_user_ids(None)
             self.recipient_emails = []
             self.recipient_info = ""
-    def private_box_edit_view(self,*,recipient_user_ids: Optional[List[int]] = None,) -> None:
+
+    def private_box_edit_view(
+        self,
+        *,
+        recipient_user_ids: Optional[List[int]] = None,
+    ) -> None:
         self.convert_id_to_info(recipient_user_ids)
         self.to_write_box = urwid.Text("To: " + self.recipient_info)
         self._setup_common_private_compose()
-
 
     def private_box_view(
         self,
@@ -880,7 +907,7 @@ class WriteBox(urwid.Pile):
                     # We extract recipients' user_ids and emails only once we know
                     # that all the recipients are valid, to avoid including any
                     # invalid ones.
-                    # self.update_recipients(self.to_write_box)
+                        self.update_recipients(self.to_write_box)
 
             if not self.msg_body_edit_enabled:
                 return key
@@ -891,7 +918,7 @@ class WriteBox(urwid.Pile):
                     self.focus_position = self.FOCUS_CONTAINER_HEADER
                 if (
                     self.compose_box_status == "open_with_private"
-                    and self.msg_edit_state is not True
+                    and self.msg_edit_state is None
                 ):
                     self.focus_position = self.FOCUS_CONTAINER_HEADER
             if self.compose_box_status == "open_with_stream":
