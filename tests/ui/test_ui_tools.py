@@ -48,6 +48,7 @@ class TestModListWalker:
     def test__set_focus(self, mod_walker, mocker):
         mod_walker.read_message = mocker.Mock()
         mod_walker._set_focus(0)
+        print(type(mod_walker.read_message))
         mod_walker.read_message.assert_called_once_with()
 
     def test_set_focus(self, mod_walker, mocker):
