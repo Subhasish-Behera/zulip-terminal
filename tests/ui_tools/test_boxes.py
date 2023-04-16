@@ -1685,7 +1685,6 @@ class TestWriteBox:
                 write_box.private_box_view()
             else:
                 write_box.private_box_edit_view()
-        print(write_box.msg_edit_state)
         size = widget_size(write_box)
 
         def focus_val(x: str) -> int:
@@ -1712,8 +1711,8 @@ class TestWriteBox:
             )
 
 
-    def test_private_box_view(self,mocker,user_dict: List[Dict[str, Any]],
-        user_id_email_dict: Dict[int, str]):
+    def test_private_box_view(self,mocker: MockerFixture,user_dict: List[Dict[str, Any]],
+        user_id_email_dict: Dict[int, str]) -> None:
         recipient_user_ids = [11]
 
         write_box = WriteBox(self.view)
@@ -1745,9 +1744,9 @@ class TestWriteBox:
         assert write_box.to_write_box.text == "To: Human 1 <person1@example.com>"
 
 
-    def test_private_box_edit_view(self,mocker,user_dict: List[Dict[str, Any]],
-        user_id_email_dict: Dict[int, str]):
-        recipient_user_ids =[11]
+    def test_private_box_edit_view(self,mocker: MockerFixture,user_dict: List[Dict[str, Any]],
+        user_id_email_dict: Dict[int, str]) -> None:
+        recipient_user_ids = [11]
         write_box = WriteBox(self.view)
         write_box.model.user_id_email_dict = user_id_email_dict
         write_box.model.user_dict = user_dict
@@ -1766,15 +1765,9 @@ class TestWriteBox:
         connect_signal_mock.assert_not_called()
         assert isinstance(write_box.to_write_box,urwid.Text)
         assert write_box.to_write_box.text == "To: Human 1 <person1@example.com>"
-        # write_box.to_write_box = mocker.Mock()
-        # write_box._setup_common_private_compose.assert_called_once()
-        # with patch.object(write_box.to_write_box, "enable_autocomplete") as mock_enable_autocomplete:
-        #     # Call the function with recipient_user_ids as None
-        #     #write_box.private_box_edit_view(recipient_user_ids=None)
-        #     mock_enable_autocomplete.assert_not_called()
-        #     # Check if enable_autocomplete is not called
 
-    def test__setup_common_private_compose(self,mocker):
+
+    def test__setup_common_private_compose(self,mocker: MockerFixture) -> None:
         write_box = WriteBox(self.view)
         write_box.to_write_box = mocker.MagicMock()
         write_box.msg_write_box = mocker.MagicMock()
@@ -1797,7 +1790,7 @@ class TestWriteBox:
                 ),
             ]
         )
-
+        assert write_box.focus_position == 1
 
     @pytest.mark.parametrize(
         "recipient_user_ids, expected_recipient_emails, expected_recipient_info",
