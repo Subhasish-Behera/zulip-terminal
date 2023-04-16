@@ -5,11 +5,10 @@ from unittest import mock
 
 import pytest
 import urwid
-from urwid_readline import ReadlineEdit
-
 from pytest import param as case
 from pytest_mock import MockerFixture
 from urwid import Widget
+from urwid_readline import ReadlineEdit
 
 from zulipterminal.config.keys import keys_for_command, primary_key_for_command
 from zulipterminal.config.symbols import (
@@ -1710,22 +1709,25 @@ class TestWriteBox:
                 expected_focus_col_name
             )
 
-
-    def test_private_box_view(self,mocker: MockerFixture,user_dict: List[Dict[str, Any]],
-        user_id_email_dict: Dict[int, str]) -> None:
+    def test_private_box_view(
+        self,
+        mocker: MockerFixture,
+        user_dict: List[Dict[str, Any]],
+        user_id_email_dict: Dict[int, str],
+    ) -> None:
         recipient_user_ids = [11]
 
         write_box = WriteBox(self.view)
         # write_box.to_write_box = mocker.MagicMock()
         write_box.to_write_box = mocker.MagicMock(spec=ReadlineEdit)
-        enable_autocomplete = mocker.patch.object(ReadlineEdit,"enable_autocomplete")
+        enable_autocomplete = mocker.patch.object(ReadlineEdit, "enable_autocomplete")
         write_box.model.user_id_email_dict = user_id_email_dict
         write_box.model.user_dict = user_dict
-        #mocker.patch(ReadlineEdit)
+        # mocker.patch(ReadlineEdit)
         connect_signal_mock = mocker.patch.object(urwid, "connect_signal")
         write_box.private_box_view(recipient_user_ids=recipient_user_ids)
         connect_signal_mock.assert_called_once()
-        #enable_autocomplete.assert_called()
+        # enable_autocomplete.assert_called()
         enable_autocomplete.assert_has_calls(
             [
                 mock.call(
@@ -1743,15 +1745,20 @@ class TestWriteBox:
         assert isinstance(write_box.to_write_box, ReadlineEdit)
         assert write_box.to_write_box.text == "To: Human 1 <person1@example.com>"
 
-
-    def test_private_box_edit_view(self,mocker: MockerFixture,user_dict: List[Dict[str, Any]],
-        user_id_email_dict: Dict[int, str]) -> None:
+    def test_private_box_edit_view(
+        self,
+        mocker: MockerFixture,
+        user_dict: List[Dict[str, Any]],
+        user_id_email_dict: Dict[int, str],
+    ) -> None:
         recipient_user_ids = [11]
         write_box = WriteBox(self.view)
         write_box.model.user_id_email_dict = user_id_email_dict
         write_box.model.user_dict = user_dict
         connect_signal_mock = mocker.patch.object(urwid, "connect_signal")
-        enable_autocomplete_mock = mocker.patch.object(ReadlineEdit, "enable_autocomplete")
+        enable_autocomplete_mock = mocker.patch.object(
+            ReadlineEdit, "enable_autocomplete"
+        )
         write_box.private_box_edit_view(recipient_user_ids=recipient_user_ids)
         enable_autocomplete_mock.assert_has_calls(
             [
@@ -1763,21 +1770,20 @@ class TestWriteBox:
             ]
         )
         connect_signal_mock.assert_not_called()
-        assert isinstance(write_box.to_write_box,urwid.Text)
+        assert isinstance(write_box.to_write_box, urwid.Text)
         assert write_box.to_write_box.text == "To: Human 1 <person1@example.com>"
 
-
-    def test__setup_common_private_compose(self,mocker: MockerFixture) -> None:
+    def test__setup_common_private_compose(self, mocker: MockerFixture) -> None:
         write_box = WriteBox(self.view)
         write_box.to_write_box = mocker.MagicMock()
         write_box.msg_write_box = mocker.MagicMock()
-        write_box.generic_autocomplete = mocker.MagicMock()
 
-
-        enable_autocomplete_mock = mocker.patch.object(ReadlineEdit, 'enable_autocomplete')
+        enable_autocomplete_mock = mocker.patch.object(
+            ReadlineEdit, "enable_autocomplete"
+        )
         write_box._setup_common_private_compose()
         connect_signal_mock = mocker.patch.object(urwid, "connect_signal")
-        assert hasattr(write_box, 'msg_write_box')
+        assert hasattr(write_box, "msg_write_box")
         connect_signal_mock.assert_not_called()
         enable_autocomplete_mock.assert_called_once()
 
