@@ -274,6 +274,7 @@ class WriteBox(urwid.Pile):
                 )
                 sleep(idle_check_time.total_seconds())
             self.send_stop_typing_status()
+
         urwid.connect_signal(self.msg_write_box, "change", on_type_send_status)
 
     def update_recipients(self, write_box: ReadlineEdit) -> None:
@@ -902,9 +903,9 @@ class WriteBox(urwid.Pile):
                         )
                         if not all_valid:
                             return key
-                    # We extract recipients' user_ids and emails only once we know
-                    # that all the recipients are valid, to avoid including any
-                    # invalid ones.
+                        # We extract recipients' user_ids and emails only once we know
+                        # that all the recipients are valid, to avoid including any
+                        # invalid ones.
                         self.update_recipients(self.to_write_box)
 
             if not self.msg_body_edit_enabled:
