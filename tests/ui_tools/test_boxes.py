@@ -1498,6 +1498,7 @@ class TestWriteBox:
             "box_type",
             "msg_body_edit_enabled",
             "message_being_edited",
+            "recipient_box_editable",
             "expected_focus_name",
             "expected_focus_col_name",
         ],
@@ -1507,6 +1508,7 @@ class TestWriteBox:
                 "HEADER_BOX_STREAM",
                 "stream",
                 True,
+                False,
                 False,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_TOPIC",
@@ -1518,6 +1520,7 @@ class TestWriteBox:
                 "stream",
                 True,
                 False,
+                False,
                 "CONTAINER_MESSAGE",
                 "MESSAGE_BOX_BODY",
                 id="topic_to_message_box",
@@ -1528,6 +1531,7 @@ class TestWriteBox:
                 "stream",
                 False,
                 True,
+                False,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_EDIT",
                 id="topic_edit_only-topic_to_edit_mode_box",
@@ -1538,6 +1542,7 @@ class TestWriteBox:
                 "stream",
                 False,
                 True,
+                False,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_TOPIC",
                 id="topic_edit_only-edit_mode_to_topic_box",
@@ -1547,6 +1552,7 @@ class TestWriteBox:
                 "MESSAGE_BOX_BODY",
                 "stream",
                 True,
+                False,
                 False,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_STREAM",
@@ -1558,6 +1564,7 @@ class TestWriteBox:
                 "stream",
                 True,
                 True,
+                False,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_TOPIC",
                 id="edit_box-stream_name_to_topic_box",
@@ -1568,6 +1575,7 @@ class TestWriteBox:
                 "stream",
                 True,
                 True,
+                False,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_EDIT",
                 id="edit_box-topic_to_edit_mode_box",
@@ -1578,6 +1586,7 @@ class TestWriteBox:
                 "stream",
                 True,
                 True,
+                False,
                 "CONTAINER_MESSAGE",
                 "MESSAGE_BOX_BODY",
                 id="edit_box-edit_mode_to_message_box",
@@ -1588,6 +1597,7 @@ class TestWriteBox:
                 "stream",
                 True,
                 True,
+                False,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_TOPIC",
                 id="edit_box-message_to_stream_name_box",
@@ -1598,9 +1608,21 @@ class TestWriteBox:
                 "private",
                 True,
                 False,
+                True,
                 "CONTAINER_MESSAGE",
                 "MESSAGE_BOX_BODY",
                 id="recipient_to_message_box",
+            ),
+            case(
+                "CONTAINER_HEADER",
+                "HEADER_BOX_RECIPIENT",
+                "private",
+                True,
+                False,
+                False,
+                "CONTAINER_MESSAGE",
+                "MESSAGE_BOX_BODY",
+                id="edit-recipient_to_message_box",
             ),
             case(
                 "CONTAINER_MESSAGE",
@@ -1608,9 +1630,21 @@ class TestWriteBox:
                 "private",
                 True,
                 False,
+                True,
                 "CONTAINER_HEADER",
                 "HEADER_BOX_RECIPIENT",
                 id="message_to_recipient_box",
+            ),
+            case(
+                "CONTAINER_MESSAGE",
+                "MESSAGE_BOX_BODY",
+                "private",
+                True,
+                False,
+                False,
+                "CONTAINER_HEADER",
+                "HEADER_BOX_RECIPIENT",
+                id="edit_message_no_change",
             ),
         ],
     )
@@ -1625,6 +1659,7 @@ class TestWriteBox:
         expected_focus_col_name: str,
         box_type: str,
         msg_body_edit_enabled: bool,
+        recipient_box_editable: bool,
         message_being_edited: bool,
         widget_size: Callable[[Widget], urwid_Size],
         mocker: MockerFixture,
@@ -1642,7 +1677,10 @@ class TestWriteBox:
             else:
                 write_box.stream_box_view(stream_id)
         else:
-            write_box.private_box_view()
+            if recipient_box_editable:
+                write_box.private_box_view()
+            else:
+                write_box.private_box_edit_view()
         size = widget_size(write_box)
 
         def focus_val(x: str) -> int:
