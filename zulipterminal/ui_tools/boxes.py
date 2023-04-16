@@ -86,7 +86,6 @@ class WriteBox(urwid.Pile):
         # Is separate from recipient_user_ids because we
         # don't include the user's own id in this list
         self.typing_recipient_user_ids: List[int]
-
         # Private message recipient text entry, None if stream-box
         # or not initialized
         self.to_write_box: Optional[ReadlineEdit]
@@ -180,7 +179,6 @@ class WriteBox(urwid.Pile):
         self.msg_write_box = ReadlineEdit(
             multiline=True, max_char=self.model.max_message_length
         )
-        print("bii")
         self.msg_write_box.enable_autocomplete(
             func=self.generic_autocomplete,
             key=primary_key_for_command("AUTOCOMPLETE"),
@@ -211,8 +209,6 @@ class WriteBox(urwid.Pile):
     ) -> None:
         if recipient_user_ids:
             self._set_regular_and_typing_recipient_user_ids(recipient_user_ids)
-            print(self.recipient_user_ids)
-            print(self.model.user_id_email_dict)
             self.recipient_emails = [
                 self.model.user_id_email_dict[user_id]
                 for user_id in self.recipient_user_ids
@@ -245,13 +241,11 @@ class WriteBox(urwid.Pile):
         self.convert_id_to_info(recipient_user_ids)
         self.send_next_typing_update = datetime.now()
         self.to_write_box = ReadlineEdit("To: ", edit_text=self.recipient_info)
-        print("pii")
         self.to_write_box.enable_autocomplete(
             func=self._to_box_autocomplete,
             key=primary_key_for_command("AUTOCOMPLETE"),
             key_reverse=primary_key_for_command("AUTOCOMPLETE_REVERSE"),
         )
-        print("pii")
         self.to_write_box.set_completer_delims("")
         self._setup_common_private_compose()
         start_period_delta = timedelta(seconds=TYPING_STARTED_WAIT_PERIOD)
@@ -280,7 +274,6 @@ class WriteBox(urwid.Pile):
                 )
                 sleep(idle_check_time.total_seconds())
             self.send_stop_typing_status()
-        print("tii")
         urwid.connect_signal(self.msg_write_box, "change", on_type_send_status)
 
     def update_recipients(self, write_box: ReadlineEdit) -> None:
