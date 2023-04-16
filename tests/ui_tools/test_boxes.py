@@ -1,8 +1,12 @@
 import datetime
 from collections import OrderedDict
 from typing import Any, Callable, Dict, List, Optional
+from unittest import mock
 
 import pytest
+import urwid
+from urwid_readline import ReadlineEdit
+
 from pytest import param as case
 from pytest_mock import MockerFixture
 from urwid import Widget
@@ -1706,6 +1710,94 @@ class TestWriteBox:
             assert write_box.FOCUS_MESSAGE_BOX_BODY == focus_val(  # noqa: SIM300
                 expected_focus_col_name
             )
+
+
+    def test_private_box_view(self,mocker,user_dict: List[Dict[str, Any]],
+        user_id_email_dict: Dict[int, str]):
+        recipient_user_ids = [11]
+
+        write_box = WriteBox(self.view)
+        # write_box.to_write_box = mocker.MagicMock()
+        write_box.to_write_box = mocker.MagicMock(spec=ReadlineEdit)
+        enable_autocomplete = mocker.patch.object(ReadlineEdit,"enable_autocomplete")
+        write_box.model.user_id_email_dict = user_id_email_dict
+        write_box.model.user_dict = user_dict
+        #mocker.patch(ReadlineEdit)
+        connect_signal_mock = mocker.patch.object(urwid, "connect_signal")
+        write_box.private_box_view(recipient_user_ids=recipient_user_ids)
+        connect_signal_mock.assert_called_once()
+        #enable_autocomplete.assert_called()
+        enable_autocomplete.assert_has_calls(
+            [
+                mock.call(
+                    func=write_box._to_box_autocomplete,
+                    key=primary_key_for_command("AUTOCOMPLETE"),
+                    key_reverse=primary_key_for_command("AUTOCOMPLETE_REVERSE"),
+                ),
+                mock.call(
+                    func=write_box.generic_autocomplete,
+                    key=primary_key_for_command("AUTOCOMPLETE"),
+                    key_reverse=primary_key_for_command("AUTOCOMPLETE_REVERSE"),
+                ),
+            ]
+        )
+        assert isinstance(write_box.to_write_box, ReadlineEdit)
+        assert write_box.to_write_box.text == "To: Human 1 <person1@example.com>"
+
+
+    def test_private_box_edit_view(self,mocker,user_dict: List[Dict[str, Any]],
+        user_id_email_dict: Dict[int, str]):
+        recipient_user_ids =[11]
+        write_box = WriteBox(self.view)
+        write_box.model.user_id_email_dict = user_id_email_dict
+        write_box.model.user_dict = user_dict
+        connect_signal_mock = mocker.patch.object(urwid, "connect_signal")
+        enable_autocomplete_mock = mocker.patch.object(ReadlineEdit, "enable_autocomplete")
+        write_box.private_box_edit_view(recipient_user_ids=recipient_user_ids)
+        enable_autocomplete_mock.assert_has_calls(
+            [
+                mock.call(
+                    func=write_box.generic_autocomplete,
+                    key=primary_key_for_command("AUTOCOMPLETE"),
+                    key_reverse=primary_key_for_command("AUTOCOMPLETE_REVERSE"),
+                ),
+            ]
+        )
+        connect_signal_mock.assert_not_called()
+        assert isinstance(write_box.to_write_box,urwid.Text)
+        assert write_box.to_write_box.text == "To: Human 1 <person1@example.com>"
+        # write_box.to_write_box = mocker.Mock()
+        # write_box._setup_common_private_compose.assert_called_once()
+        # with patch.object(write_box.to_write_box, "enable_autocomplete") as mock_enable_autocomplete:
+        #     # Call the function with recipient_user_ids as None
+        #     #write_box.private_box_edit_view(recipient_user_ids=None)
+        #     mock_enable_autocomplete.assert_not_called()
+        #     # Check if enable_autocomplete is not called
+
+    def test__setup_common_private_compose(self,mocker):
+        write_box = WriteBox(self.view)
+        write_box.to_write_box = mocker.MagicMock()
+        write_box.msg_write_box = mocker.MagicMock()
+        write_box.generic_autocomplete = mocker.MagicMock()
+
+
+        enable_autocomplete_mock = mocker.patch.object(ReadlineEdit, 'enable_autocomplete')
+        write_box._setup_common_private_compose()
+        connect_signal_mock = mocker.patch.object(urwid, "connect_signal")
+        assert hasattr(write_box, 'msg_write_box')
+        connect_signal_mock.assert_not_called()
+        enable_autocomplete_mock.assert_called_once()
+
+        enable_autocomplete_mock.assert_has_calls(
+            [
+                mock.call(
+                    func=write_box.generic_autocomplete,
+                    key=primary_key_for_command("AUTOCOMPLETE"),
+                    key_reverse=primary_key_for_command("AUTOCOMPLETE_REVERSE"),
+                ),
+            ]
+        )
+
 
     @pytest.mark.parametrize(
         "recipient_user_ids, expected_recipient_emails, expected_recipient_info",
