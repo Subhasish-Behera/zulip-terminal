@@ -238,7 +238,8 @@ class MessageView(urwid.ListBox):
             message_reactions = message["reactions"]
             if len(message_reactions) > 0:
                 for reaction in message_reactions:
-                    self.model.toggle_message_reaction(message, reaction_to_toggle=reaction["emoji_name"])
+                    emoji = reaction["emoji_name"]
+                    self.model.toggle_message_reaction(message, emoji)
 
         key = super().keypress(size, key)
         return key
