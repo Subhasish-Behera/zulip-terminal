@@ -240,6 +240,7 @@ class MessageView(urwid.ListBox):
                 for reaction in message_reactions:
                     emoji = reaction["emoji_name"]
                     self.model.toggle_message_reaction(message, emoji)
+                    break
 
         key = super().keypress(size, key)
         return key
