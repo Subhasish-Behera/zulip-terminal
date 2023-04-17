@@ -444,7 +444,6 @@ class Model:
     ) -> None:
         # Check if reaction_to_toggle is a valid original/alias
         assert reaction_to_toggle in self.all_emoji_names
-
         for emoji_name, emoji_data in self.active_emoji_data.items():
             if (
                 reaction_to_toggle == emoji_name

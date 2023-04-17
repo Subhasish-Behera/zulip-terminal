@@ -228,6 +228,14 @@ class MessageView(urwid.ListBox):
         elif is_command_key("THUMBS_UP", key) and self.focus is not None:
             message = self.focus.original_widget.message
             self.model.toggle_message_reaction(message, reaction_to_toggle="thumbs_up")
+        elif is_command_key("EQUAL_REACTION",key) and self.focus is not None:
+            message = self.focus.original_widget.message
+            if message["reactions"]:
+                reaction = message["reactions"][0]
+                reaction_to_toggle = reaction["emoji_name"]
+                self.model.toggle_message_reaction(
+                    message, reaction_to_toggle=reaction_to_toggle
+                )
 
         elif is_command_key("TOGGLE_STAR_STATUS", key) and self.focus is not None:
             message = self.focus.original_widget.message

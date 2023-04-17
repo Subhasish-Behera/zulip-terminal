@@ -254,6 +254,11 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
         'help_text': 'Add/remove thumbs-up reaction to the current message',
         'key_category': 'msg_actions',
     },
+    'EQUAL_REACTION':{
+        'keys': ['='],
+        'help_text': 'Add/remove First reaction to the current message',
+        'key_category': 'msg_actions',
+    },
     'TOGGLE_STAR_STATUS': {
         'keys': ['ctrl s', '*'],
         'help_text': 'Add/remove star status of the current message',
