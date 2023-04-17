@@ -236,7 +236,10 @@ class MessageView(urwid.ListBox):
         elif is_command_key("REACTION_AGREEMENT", key) and self.focus is not None:
             message = self.focus.original_widget.message
             message_reactions = message["reactions"]
-            self.model.toggle_message_reaction(message, message_reactions[0])
+            #self.model.toggle_message_reaction(message, message_reactions[0])
+            if len(message_reactions) > 0:
+                for reaction in message_reactions:
+                    self.model.toggle_message_reaction(message, reaction_to_toggle=reaction["emoji_name"])
 
         key = super().keypress(size, key)
         return key
