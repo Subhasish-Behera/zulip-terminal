@@ -267,7 +267,7 @@ class MessageBox(urwid.Pile):
                 if (my_user_id, "You") in ids:
                     ids.remove((my_user_id, "You"))
                     ids.append((my_user_id, "You"))
-
+            print(reactions)
             reaction_texts = [
                 (
                     "reaction_mine"

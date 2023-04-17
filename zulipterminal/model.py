@@ -444,6 +444,8 @@ class Model:
     ) -> None:
         # Check if reaction_to_toggle is a valid original/alias
         assert reaction_to_toggle in self.all_emoji_names
+        # print(message["reactions"])
+        # print("hii")
         for emoji_name, emoji_data in self.active_emoji_data.items():
             if (
                 reaction_to_toggle == emoji_name
@@ -467,6 +469,7 @@ class Model:
             response = self.client.remove_reaction(reaction_to_toggle_spec)
         else:
             response = self.client.add_reaction(reaction_to_toggle_spec)
+        # print(message["reactions"])
         display_error_if_present(response, self.controller)
 
     def has_user_reacted_to_message(self, message: Message, *, emoji_code: str) -> bool:
@@ -1643,6 +1646,7 @@ class Model:
         # If the message is indexed
         if message_id in self.index["messages"]:
             message = self.index["messages"][message_id]
+            # print("1",message["reactions"])
             if event["op"] == "add":
                 message["reactions"].append(
                     {
@@ -1652,6 +1656,7 @@ class Model:
                         "emoji_name": event["emoji_name"],
                     }
                 )
+                # print("2",message["reactions"])
             else:
                 emoji_code = event["emoji_code"]
                 for reaction in message["reactions"]:
@@ -1659,6 +1664,7 @@ class Model:
                     # remove the first one encountered
                     if reaction["emoji_code"] == emoji_code:
                         message["reactions"].remove(reaction)
+                # print("3",message["reactions"])
 
             self.index["messages"][message_id] = message
             self._update_rendered_view(message_id)
