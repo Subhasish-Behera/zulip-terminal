@@ -231,6 +231,7 @@ class MessageView(urwid.ListBox):
         elif is_command_key("EQUAL_REACTION", key) and self.focus is not None:
             message = self.focus.original_widget.message
             # print("1",message["reactions"])
+            print(message["reactions"])
             length = len(message["reactions"])
             if length != 0:
                 first_reaction = message["reactions"][0]
