@@ -927,6 +927,10 @@ class WriteBox(urwid.Pile):
                 else:
                     header.focus_col = self.FOCUS_HEADER_BOX_STREAM
             else:
+                if self.msg_edit_state:
+                    self.model.controller.report_error(
+                        [" Recipient(s) can not be edited while editing a PM."]
+                    )
                 header.focus_col = self.FOCUS_HEADER_BOX_RECIPIENT
 
         key = super().keypress(size, key)
