@@ -1591,7 +1591,7 @@ class Model:
         # Update edited message status from single message id
         # NOTE: If all messages in topic have topic edited,
         #       they are not all marked as edited, as per server optimization
-        message_id = event["message_id"]
+      sd  message_id = event["message_id"]
         indexed_message = self.index["messages"].get(message_id, None)
 
         if indexed_message:
