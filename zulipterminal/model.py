@@ -1586,7 +1586,7 @@ class Model:
     def _handle_update_message_event(self, event: Event) -> None:
         """
         Handle updated (edited) messages (changed content/subject)
-        """
+   a     """
         assert event["type"] == "update_message"
         # Update edited message status from single message id
         # NOTE: If all messages in topic have topic edited,
