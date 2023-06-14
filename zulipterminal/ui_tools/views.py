@@ -1169,40 +1169,25 @@ class HelpView(PopUpView):
 
         super().__init__(controller, widgets, "HELP", popup_width, title)
 
-class MarkdownHelpView(PopUpView):
-    def __init__(self, controller: Any, title: str) -> None:
-        raw_menu_content = []  # to calculate table dimensions
-        rendered_menu_content = []  # to display rendered content in table
-        user_name = controller.model.user_full_name
-
-        for element in MARKDOWN_ELEMENTS:
-            raw_content = element["raw_text"]
-            html_element = element["html_element"].format(**dict(user=user_name))
-
-            rendered_content, *_ = MessageBox.transform_content(
-                html_element, controller.model.server_url
-            )
-
-            raw_menu_content.append((raw_content, raw_content))
-            rendered_menu_content.append((raw_content, rendered_content))
-
-        popup_width, column_widths = self.calculate_table_widths(
-            [("", raw_menu_content)], len(title)
+class FileUploadView(PopUpView):
+    def __init__(
+        self,
+        controller: Any,
+        title: str,
+    ) -> None:
+        self.controller = controller
+        max_cols, max_rows = controller.maximum_popup_dimensions()
+        self.file_location_edit = urwid.Edit()
+        body_list = [self.file_location_edit]
+        super().__init__(
+            controller,
+            body_list,
+            "MSG_INFO",
+            max_cols,
+            title,
+            # urwid.Pile(msg_box.header),
+            # urwid.Pile(msg_box.footer),
         )
-
-        header_widgets = [
-            urwid.Text([("popup_category", "You type")], align="center"),
-            urwid.Text([("popup_category", "You get")], align="center"),
-        ]
-        header_columns = urwid.Columns(header_widgets)
-        header = urwid.Pile([header_columns, urwid.Divider(COLUMN_TITLE_BAR_LINE)])
-
-        body = self.make_table_with_categories(
-            [("", rendered_menu_content)], column_widths
-        )
-
-        super().__init__(controller, body, "MARKDOWN_HELP", popup_width, title, header)
-
 
 class MarkdownHelpView(PopUpView):
     def __init__(self, controller: Any, title: str) -> None:

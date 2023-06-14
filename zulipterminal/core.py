@@ -33,6 +33,7 @@ from zulipterminal.ui_tools.utils import create_msg_box_list
 from zulipterminal.ui_tools.views import (
     AboutView,
     EditHistoryView,
+    FileUploadView,
     EditModeView,
     EmojiPickerView,
     FullRawMsgView,
@@ -274,7 +275,8 @@ class Controller:
         )
         self.show_pop_up(msg_info_view, "area:msg")
     def show_file_upload_popup(self) -> None:
-        file_upload_view = FileUploadView()
+        file_upload_view = FileUploadView(self,"Upload File")
+        self.show_pop_up(file_upload_view,"area:msg")
     def show_emoji_picker(self, message: Message) -> None:
         all_emoji_units = [
             (emoji_name, emoji["code"], emoji["aliases"])

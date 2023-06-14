@@ -32,7 +32,7 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
     'HELP': {
         'keys': ['?'],
         'help_text': 'Show/hide help menu',
-        'key_category': 'msg_actions',
+        'key_category': 'msg_compose',
     },
     'FILE_UPLOAD': {
         'keys': ['o'],
