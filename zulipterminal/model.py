@@ -556,6 +556,11 @@ class Model:
         if message_was_sent:
             notify_if_message_sent_outside_narrow(composition, self.controller)
         return message_was_sent
+    def get_file_upld_uri(self,file_loctn: str):
+        with open(file_loctn, "rb") as fp:
+            result = self.client.upload_file(fp)
+        return result["uri"]
+
 
     def update_private_message(self, msg_id: int, content: str) -> bool:
         request: PrivateMessageUpdateRequest = {
@@ -1614,6 +1619,9 @@ class Model:
         #   the event didn't have a 'subject' update.
         if "subject" in event:
             location_event = cast(UpdateMessagesLocationEvent, event)
+            # print(event)
+            # print("hii")
+            # print(location_event)
             new_subject = location_event["subject"]
             stream_id = location_event["stream_id"]
             old_subject = location_event["orig_subject"]

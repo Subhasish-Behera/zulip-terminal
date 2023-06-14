@@ -1149,6 +1149,7 @@ class UserInfoView(PopUpView):
 
 class HelpView(PopUpView):
     def __init__(self, controller: Any, title: str) -> None:
+        print("hii")
         help_menu_content = []
         for category in HELP_CATEGORIES:
             keys_in_category = (
@@ -1168,7 +1169,48 @@ class HelpView(PopUpView):
 
         super().__init__(controller, widgets, "HELP", popup_width, title)
 
-
+class FileUploadView(PopUpView):
+    def __init__(
+        self,
+        controller: Any,
+        title: str,
+    ) -> None:
+        print("night")
+        self.controller = controller
+        self.model = controller.model
+        self.uri = None
+        max_cols, max_rows = controller.maximum_popup_dimensions()
+        self.predefined_text = urwid.Text("Location : ")
+        self.file_location_edit = urwid.Edit()
+        columns = [self.predefined_text,self.file_location_edit]
+        # body_list = [self.file_location_edit]
+        super().__init__(
+            controller,
+            columns,
+            "FILE_UPLOAD",
+            max_cols,
+            title,
+            # urwid.Pile(msg_box.header),
+            # urwid.Pile(msg_box.footer),
+        )
+        print("night2")
+    def _handle_file_upload(self,file_location):
+        file_location1 = file_location
+        print("hii",file_location)
+        self.uri = self.model.get_file_upld_uri(file_location1)
+        self.controller.set_uri(self.uri)  # Update the uri in the controller
+        print(self.uri)
+        # Notify the waiting thread that the uri has been updated
+        #self.controller.uri_updated_event.set()
+    def keypress(self, size: urwid_Size, key: str) -> str:
+        print("nope")
+        if is_command_key("FILE_UPLOAD", key):
+            #print("n")
+            self._handle_file_upload(self.file_location_edit.edit_text)
+        if is_command_key("GO_BACK", key):
+            return key
+            #print("nn")
+        return super().keypress(size, key)
 class MarkdownHelpView(PopUpView):
     def __init__(self, controller: Any, title: str) -> None:
         raw_menu_content = []  # to calculate table dimensions
