@@ -1169,6 +1169,47 @@ class HelpView(PopUpView):
         super().__init__(controller, widgets, "HELP", popup_width, title)
 
 
+class FileUploadView(PopUpView):
+    def __init__(
+        self,
+        controller: Any,
+        write_box: Any,
+        title: str,
+    ) -> None:
+        self.controller = controller
+        self.model = controller.model
+        self.write_box = write_box
+        self.uri = None
+        max_cols, max_rows = controller.maximum_popup_dimensions()
+        self.predefined_text = urwid.Text("Location : ")
+        self.file_location_edit = urwid.Edit()
+        columns = [self.predefined_text, self.file_location_edit]
+        # body_list = [self.file_location_edit]
+        super().__init__(
+            controller,
+            columns,
+            "FILE_UPLOAD",
+            max_cols,
+            title,
+            # urwid.Pile(msg_box.header),
+            # urwid.Pile(msg_box.footer),
+        )
+
+    def _handle_file_upload(self, file_location: str) -> None:
+        self.uri = self.model.get_file_upld_uri(file_location)
+        file_name = file_location.split("/")[-1]
+        edit_widget = self.write_box.contents[self.write_box.FOCUS_CONTAINER_MESSAGE][
+            self.write_box.FOCUS_MESSAGE_BOX_BODY
+        ]
+        edit_widget.edit_text += f"[{file_name}](/{str(self.uri)})"
+        edit_widget.set_edit_pos(len(edit_widget.get_edit_text()))
+
+    def keypress(self, size: urwid_Size, key: str) -> str:
+        if is_command_key("FILE_UPLOAD", key):
+            self._handle_file_upload(self.file_location_edit.edit_text)
+        return super().keypress(size, key)
+
+
 class MarkdownHelpView(PopUpView):
     def __init__(self, controller: Any, title: str) -> None:
         raw_menu_content = []  # to calculate table dimensions
