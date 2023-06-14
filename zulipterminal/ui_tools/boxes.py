@@ -67,6 +67,7 @@ class WriteBox(urwid.Pile):
         super().__init__(self.main_view(True))
         self.model = view.model
         self.view = view
+        self.uri: Any
 
         # Used to indicate user's compose status, "closed" by default
         self.compose_box_status: Literal[
@@ -718,7 +719,12 @@ class WriteBox(urwid.Pile):
             # set default footer when done with autocomplete
             self.is_in_typeahead_mode = False
             self.view.set_footer_text()
-
+        if is_command_key("FILE_UPLOAD", key):
+            uri = self.model.controller.show_file_upload_popup()
+            #uri_link = uri.result
+            #These two lines will add the url link and file name as text in the write box.
+            # self.contents[self.FOCUS_CONTAINER_MESSAGE][
+            # self.FOCUS_MESSAGE_BOX_BODY].edit_text += uri_link
         if is_command_key("SEND_MESSAGE", key):
             self.send_stop_typing_status()
             if self.compose_box_status == "open_with_stream":
@@ -837,6 +843,7 @@ class WriteBox(urwid.Pile):
                         this_draft,
                     )
         elif is_command_key("CYCLE_COMPOSE_FOCUS", key):
+
             if len(self.contents) == 0:
                 return key
             header = self.header_write_box
