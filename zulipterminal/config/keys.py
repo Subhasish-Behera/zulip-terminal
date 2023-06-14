@@ -35,6 +35,11 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
         'excluded_from_random_tips': True,
         'key_category': 'general',
     },
+    'FILE_UPLOAD': {
+        'keys': ['ctrl o'],
+        'help_text': 'Upload file',
+        'key_category': 'general',
+    },
     'MARKDOWN_HELP': {
         'keys': ['meta m'],
         'help_text': 'Show/hide markdown help menu',
