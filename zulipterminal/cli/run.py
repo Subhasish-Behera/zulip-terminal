@@ -555,7 +555,7 @@ def main(options: Optional[List[str]] = None) -> None:
         boolean_settings: Dict[str, bool] = dict()
         for setting, valid_values in VALID_BOOLEAN_SETTINGS.items():
             boolean_settings[setting] = zterm[setting].value == valid_values[0]
-
+        print(zuliprc_path)
         Controller(
             config_file=zuliprc_path,
             maximum_footlinks=maximum_footlinks,
@@ -566,6 +566,7 @@ def main(options: Optional[List[str]] = None) -> None:
             **boolean_settings,
             debug_path=debug_path,
         ).main()
+        print(zuliprc_path)
     except ServerConnectionFailure as e:
         # Acts as separator between logs
         zt_logger.info("\n\n%s\n\n", e)
