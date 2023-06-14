@@ -1149,6 +1149,7 @@ class UserInfoView(PopUpView):
 
 class HelpView(PopUpView):
     def __init__(self, controller: Any, title: str) -> None:
+        print("hii")
         help_menu_content = []
         for category in HELP_CATEGORIES:
             keys_in_category = (
@@ -1167,6 +1168,40 @@ class HelpView(PopUpView):
         widgets = self.make_table_with_categories(help_menu_content, column_widths)
 
         super().__init__(controller, widgets, "HELP", popup_width, title)
+
+class MarkdownHelpView(PopUpView):
+    def __init__(self, controller: Any, title: str) -> None:
+        raw_menu_content = []  # to calculate table dimensions
+        rendered_menu_content = []  # to display rendered content in table
+        user_name = controller.model.user_full_name
+
+        for element in MARKDOWN_ELEMENTS:
+            raw_content = element["raw_text"]
+            html_element = element["html_element"].format(**dict(user=user_name))
+
+            rendered_content, *_ = MessageBox.transform_content(
+                html_element, controller.model.server_url
+            )
+
+            raw_menu_content.append((raw_content, raw_content))
+            rendered_menu_content.append((raw_content, rendered_content))
+
+        popup_width, column_widths = self.calculate_table_widths(
+            [("", raw_menu_content)], len(title)
+        )
+
+        header_widgets = [
+            urwid.Text([("popup_category", "You type")], align="center"),
+            urwid.Text([("popup_category", "You get")], align="center"),
+        ]
+        header_columns = urwid.Columns(header_widgets)
+        header = urwid.Pile([header_columns, urwid.Divider(COLUMN_TITLE_BAR_LINE)])
+
+        body = self.make_table_with_categories(
+            [("", rendered_menu_content)], column_widths
+        )
+
+        super().__init__(controller, body, "MARKDOWN_HELP", popup_width, title, header)
 
 
 class MarkdownHelpView(PopUpView):

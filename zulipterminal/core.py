@@ -273,7 +273,8 @@ class Controller:
             time_mentions,
         )
         self.show_pop_up(msg_info_view, "area:msg")
-
+    def show_file_upload_popup(self) -> None:
+        file_upload_view = FileUploadView()
     def show_emoji_picker(self, message: Message) -> None:
         all_emoji_units = [
             (emoji_name, emoji["code"], emoji["aliases"])

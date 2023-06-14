@@ -718,6 +718,7 @@ class WriteBox(urwid.Pile):
             # set default footer when done with autocomplete
             self.is_in_typeahead_mode = False
             self.view.set_footer_text()
+        if is_command_key("HELP", key):
 
         if is_command_key("SEND_MESSAGE", key):
             self.send_stop_typing_status()

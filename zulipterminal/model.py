@@ -1614,6 +1614,9 @@ class Model:
         #   the event didn't have a 'subject' update.
         if "subject" in event:
             location_event = cast(UpdateMessagesLocationEvent, event)
+            # print(event)
+            # print("hii")
+            # print(location_event)
             new_subject = location_event["subject"]
             stream_id = location_event["stream_id"]
             old_subject = location_event["orig_subject"]
