@@ -275,7 +275,7 @@ class Controller:
         )
         self.show_pop_up(msg_info_view, "area:msg")
     def show_file_upload_popup(self) -> None:
-        file_upload_view = FileUploadView(self,"Upload File")
+        file_upload_view = FileUploadView(self,"Upload File(Enter the location)")
         self.show_pop_up(file_upload_view,"area:msg")
     def show_emoji_picker(self, message: Message) -> None:
         all_emoji_units = [

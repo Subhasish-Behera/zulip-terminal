@@ -35,7 +35,7 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
         'key_category': 'msg_compose',
     },
     'FILE_UPLOAD': {
-        'keys': ['o'],
+        'keys': ['ctrl o'],
         'help_text': 'Upload file',
         'key_category': 'general',
     },

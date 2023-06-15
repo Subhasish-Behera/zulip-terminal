@@ -1177,18 +1177,28 @@ class FileUploadView(PopUpView):
     ) -> None:
         self.controller = controller
         max_cols, max_rows = controller.maximum_popup_dimensions()
+        self.predefined_text = urwid.Text("Location : ")
         self.file_location_edit = urwid.Edit()
-        body_list = [self.file_location_edit]
+        columns = [self.predefined_text,self.file_location_edit]
+        # body_list = [self.file_location_edit]
         super().__init__(
             controller,
-            body_list,
-            "MSG_INFO",
+            columns,
+            "FILE_UPLOAD",
             max_cols,
             title,
             # urwid.Pile(msg_box.header),
             # urwid.Pile(msg_box.footer),
         )
+    def _handle_file_upload(self,file_location):
+        file_location1=
+    def keypress(self, size: urwid_Size, key: str) -> str:
+        if is_command_key("FILE_UPLOAD", key):
+            self._handle_file_upload(self.file_location_edit)
+        if is_command_key("GO_BACK", key):
+            return key
 
+        return super().keypress(size, key)
 class MarkdownHelpView(PopUpView):
     def __init__(self, controller: Any, title: str) -> None:
         raw_menu_content = []  # to calculate table dimensions
