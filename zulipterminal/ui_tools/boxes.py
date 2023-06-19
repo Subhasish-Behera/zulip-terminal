@@ -64,9 +64,11 @@ DELIMS_MESSAGE_COMPOSE = "\t\n;"
 
 class WriteBox(urwid.Pile):
     def __init__(self, view: Any) -> None:
+        #print("bulb")
         super().__init__(self.main_view(True))
         self.model = view.model
         self.view = view
+        self.uri: Any
 
         # Used to indicate user's compose status, "closed" by default
         self.compose_box_status: Literal[
@@ -711,16 +713,26 @@ class WriteBox(urwid.Pile):
         return emoji_typeahead, emojis
 
     def keypress(self, size: urwid_Size, key: str) -> Optional[str]:
+        #print("1")
+        #print(self.contents[self.FOCUS_CONTAINER_MESSAGE][self.FOCUS_MESSAGE_BOX_BODY].edit_text )
+        #print(type(self.contents[self.FOCUS_CONTAINER_MESSAGE][self.FOCUS_MESSAGE_BOX_BODY] ))
         if self.is_in_typeahead_mode and not (
             is_command_key("AUTOCOMPLETE", key)
             or is_command_key("AUTOCOMPLETE_REVERSE", key)
         ):
+            #print("2")
             # set default footer when done with autocomplete
             self.is_in_typeahead_mode = False
             self.view.set_footer_text()
         if is_command_key("FILE_UPLOAD", key):
-            self.model.controller.show_file_upload_popup()
+            #print("3")
+            print("nnn")
+            uri_link = self.model.controller.show_file_upload_popup()
+            print("heyheyhey")
+            self.contents[self.FOCUS_CONTAINER_MESSAGE][self.FOCUS_MESSAGE_BOX_BODY].edit_text += uri_link
+
         if is_command_key("SEND_MESSAGE", key):
+            #print("4")
             self.send_stop_typing_status()
             if self.compose_box_status == "open_with_stream":
                 if re.fullmatch(r"\s*", self.title_write_box.edit_text):
@@ -780,6 +792,7 @@ class WriteBox(urwid.Pile):
                     self.keypress(size, primary_key_for_command("GO_BACK"))
                     assert self.msg_edit_state is None
         elif is_command_key("NARROW_MESSAGE_RECIPIENT", key):
+            #print("4")
             if self.compose_box_status == "open_with_stream":
                 self.model.controller.narrow_to_topic(
                     stream_name=self.stream_write_box.edit_text,
@@ -801,15 +814,18 @@ class WriteBox(urwid.Pile):
                         "Cannot narrow to message without specifying recipients."
                     )
         elif is_command_key("GO_BACK", key):
+            #print("5")
             self.send_stop_typing_status()
             self._set_compose_attributes_to_defaults()
             self.view.controller.exit_editor_mode()
             self.main_view(False)
             self.view.middle_column.set_focus("body")
         elif is_command_key("MARKDOWN_HELP", key):
+            #print("6")
             self.view.controller.show_markdown_help()
             return key
         elif is_command_key("SAVE_AS_DRAFT", key):
+            #print("7")
             if self.msg_edit_state is None:
                 if self.compose_box_status == "open_with_private":
                     all_valid = self._tidy_valid_recipients_and_notify_invalid_ones(
@@ -838,6 +854,7 @@ class WriteBox(urwid.Pile):
                         this_draft,
                     )
         elif is_command_key("CYCLE_COMPOSE_FOCUS", key):
+            #print("8")
             if len(self.contents) == 0:
                 return key
             header = self.header_write_box

@@ -816,8 +816,8 @@ class MessageBox(urwid.Pile):
 
         if body and body.find(name="blockquote"):
             metadata["bq_len"] = cls.indent_quoted_content(soup, QUOTED_TEXT_MARKER)
-
         markup, message_links, time_mentions = cls.soup2markup(body, metadata)
+        # print("blue", message_links)
         return (None, markup), message_links, time_mentions
 
     @staticmethod

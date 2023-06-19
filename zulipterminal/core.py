@@ -3,6 +3,7 @@ Defines the `Controller`, which sets up the `Model`, `View`, and how they intera
 """
 
 import itertools
+import threading
 import os
 import signal
 import sys
@@ -81,6 +82,8 @@ class Controller:
         self.maximum_footlinks = maximum_footlinks
 
         self.debug_path = debug_path
+        self._uri = None
+        self.uri_updated_event = threading.Event()
 
         self._editor: Optional[Any] = None
 
@@ -110,6 +113,14 @@ class Controller:
         # Register new ^C handler
         signal.signal(signal.SIGINT, self.exit_handler)
 
+
+    @property
+    def uri(self) -> str:
+        return self._uri
+
+    @uri.setter
+    def uri(self, value: str) -> None:
+        self._uri = value
     def raise_exception_in_main_thread(
         self, exc_info: ExceptionInfo, *, critical: bool
     ) -> None:
@@ -240,7 +251,7 @@ class Controller:
             width=to_show.width + 2,
             height=to_show.height + 4,
         )
-
+        print("papapapa")
     def is_any_popup_open(self) -> bool:
         return isinstance(self.loop.widget, urwid.Overlay)
 
@@ -275,8 +286,17 @@ class Controller:
         )
         self.show_pop_up(msg_info_view, "area:msg")
     def show_file_upload_popup(self) -> None:
+        print("a")
         file_upload_view = FileUploadView(self,"Upload File(Enter the location)")
+        print("b")
         self.show_pop_up(file_upload_view,"area:msg")
+        print("c")
+        self.uri_updated_event.wait()
+        print("d")
+        self.uri_updated_event.clear()
+        print("e")
+        #print("tate",file_upload_view.uri)
+        return self._uri
     def show_emoji_picker(self, message: Message) -> None:
         all_emoji_units = [
             (emoji_name, emoji["code"], emoji["aliases"])
