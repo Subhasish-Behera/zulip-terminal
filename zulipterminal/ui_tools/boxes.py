@@ -727,10 +727,15 @@ class WriteBox(urwid.Pile):
         if is_command_key("FILE_UPLOAD", key):
             #print("3")
             print("nnn")
-            uri_link = self.model.controller.show_file_upload_popup()
-            print("heyheyhey")
-            self.contents[self.FOCUS_CONTAINER_MESSAGE][self.FOCUS_MESSAGE_BOX_BODY].edit_text += uri_link
+            uri_thread = self.model.controller.show_file_upload_popup()
+            uri_thread.start()  # Start the thread
 
+            # Wait for the thread to finish and get the result
+            uri_thread.join()
+            uri_link = uri_thread.result
+
+            self.contents[self.FOCUS_CONTAINER_MESSAGE][
+            self.FOCUS_MESSAGE_BOX_BODY].edit_text += uri_link
         if is_command_key("SEND_MESSAGE", key):
             #print("4")
             self.send_stop_typing_status()

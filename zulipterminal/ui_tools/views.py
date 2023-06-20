@@ -1199,9 +1199,9 @@ class FileUploadView(PopUpView):
         print("hii",file_location)
         self.uri = self.model.get_file_upld_uri(file_location1)
         self.controller.set_uri(self.uri)  # Update the uri in the controller
-
+        print(self.uri)
         # Notify the waiting thread that the uri has been updated
-        self.controller.uri_updated_event.set()
+        #self.controller.uri_updated_event.set()
     def keypress(self, size: urwid_Size, key: str) -> str:
         print("nope")
         if is_command_key("FILE_UPLOAD", key):

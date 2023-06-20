@@ -4,6 +4,7 @@ Defines the `Controller`, which sets up the `Model`, `View`, and how they intera
 
 import itertools
 import threading
+import asyncio
 import os
 import signal
 import sys
@@ -82,6 +83,8 @@ class Controller:
         self.maximum_footlinks = maximum_footlinks
 
         self.debug_path = debug_path
+
+
         self._uri = None
         self.uri_updated_event = threading.Event()
 
@@ -118,9 +121,10 @@ class Controller:
     def uri(self) -> str:
         return self._uri
 
-    @uri.setter
-    def uri(self, value: str) -> None:
+
+    def set_uri(self, value: str) -> None:
         self._uri = value
+        self,uri_updated_event.set()
     def raise_exception_in_main_thread(
         self, exc_info: ExceptionInfo, *, critical: bool
     ) -> None:
@@ -285,18 +289,46 @@ class Controller:
             time_mentions,
         )
         self.show_pop_up(msg_info_view, "area:msg")
+
+    def wait_for_uri_update(self) -> str:
+        # Wait for the event to be set
+        self.uri_updated_event.wait()
+        self.uri_updated_event.clear()
+
+        # Return the updated uri
+        return self._uri
     def show_file_upload_popup(self) -> None:
         print("a")
         file_upload_view = FileUploadView(self,"Upload File(Enter the location)")
         print("b")
         self.show_pop_up(file_upload_view,"area:msg")
         print("c")
-        self.uri_updated_event.wait()
-        print("d")
-        self.uri_updated_event.clear()
-        print("e")
-        #print("tate",file_upload_view.uri)
-        return self._uri
+        return threading.Thread(target=self.wait_for_uri_update)
+        # def run_file_upload_popup():
+        #     print("q")
+        #     file_upload_view = FileUploadView(self, "Upload File(E    updated_uri = self.urinter the location)")
+        #     print("w")
+        #     self.show_pop_up(file_upload_view, "area:msg")
+        #     print("e")
+        #     # Wait for the uri to be updated
+        #     self.uri_updated_event.wait()
+        #     print("r")
+        #     self.uri_updated_event.clear()
+        #     print("t")
+        #     # Start a new thread to run the file upload popup
+        #
+        # popup_thread = threading.Thread(target=run_file_upload_popup)
+        # print("y")
+        # popup_thread.start()
+
+        # Continue with the main thread
+        # ...
+
+        # When needed, retrieve the updated uri
+        # print("u")
+        # popup_thread.join()  # Wait for the popup thread to finish
+        # print("i")
+        # return self._uri
     def show_emoji_picker(self, message: Message) -> None:
         all_emoji_units = [
             (emoji_name, emoji["code"], emoji["aliases"])
