@@ -303,7 +303,7 @@ class Controller:
         print("b")
         self.show_pop_up(file_upload_view,"area:msg")
         print("c")
-        return threading.Thread(target=self.wait_for_uri_update)
+        #return threading.Thread(target=self.wait_for_uri_update)
         # def run_file_upload_popup():
         #     print("q")
         #     file_upload_view = FileUploadView(self, "Upload File(E    updated_uri = self.urinter the location)")
