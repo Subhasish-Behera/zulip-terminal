@@ -4,6 +4,7 @@ UI boxes for entering text: WriteBox, MessageSearchBox, PanelSearchBox
 
 import re
 import unicodedata
+import threading
 from collections import Counter
 from datetime import datetime, timedelta
 from time import sleep
@@ -727,12 +728,13 @@ class WriteBox(urwid.Pile):
         if is_command_key("FILE_UPLOAD", key):
             #print("3")
             print("nnn")
-            uri_thread = self.model.controller.show_file_upload_popup()
-            uri_thread.start()  # Start the thread
+            popup_thread = threading.Thread(target = self.view.controller.show_file_upload_popup()
+            popup_thread.start()
+            # Start the thread
 
             # Wait for the thread to finish and get the result
-            uri_thread.join()
-            uri_link = uri_thread.result
+
+
 
             self.contents[self.FOCUS_CONTAINER_MESSAGE][
             self.FOCUS_MESSAGE_BOX_BODY].edit_text += uri_link

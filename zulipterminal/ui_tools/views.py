@@ -1205,7 +1205,6 @@ class FileUploadView(PopUpView):
     def keypress(self, size: urwid_Size, key: str) -> str:
         print("nope")
         if is_command_key("FILE_UPLOAD", key):
-            #print("n")
             self._handle_file_upload(self.file_location_edit.edit_text)
         if is_command_key("GO_BACK", key):
             return key
