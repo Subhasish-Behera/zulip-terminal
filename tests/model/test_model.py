@@ -2154,6 +2154,7 @@ class TestModel:
         is_topic_muted,
         no_of_times_notify_call_expected,
     ):
+        print("hii",stream_msg_fixture)
         stream_msg_fixture.update(flags)
         self.controller.notify_enabled = True
         stream_msg_fixture.update(display_recipient)
