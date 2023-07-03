@@ -1192,7 +1192,14 @@ class FileUploadView(PopUpView):
             # urwid.Pile(msg_box.footer),
         )
 
+    def _handle_file_upload(self, file_location):
+        file_location1 = file_location
+        self.uri = self.model.get_file_upld_uri(file_location1)
+        self.controller.set_uri(self.uri)  # Update the uri in the controller
+
     def keypress(self, size: urwid_Size, key: str) -> str:
+        if is_command_key("FILE_UPLOAD", key):
+            self._handle_file_upload(self.file_location_edit.edit_text)
         return super().keypress(size, key)
 class MarkdownHelpView(PopUpView):
     def __init__(self, controller: Any, title: str) -> None:
