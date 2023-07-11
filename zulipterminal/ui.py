@@ -45,12 +45,16 @@ class View(urwid.WidgetWrap):
         self.write_box = WriteBox(self)
         self.search_box = MessageSearchBox(self.controller)
         self.stream_topic_map: Dict[int, Any] = {}
+        for stream_id in self.model.stream_dict:
+            self.stream_topic_map[stream_id] = None
 
         self.message_view: Any = None
         self.displaying_selection_hint = False
 
         super().__init__(self.main_window())
 
+    def update_stream_topic_map(self,stream_id: int,topic_name: str) -> None:
+        self.stream_topic_map[stream_id] = topic_name
     def left_column_view(self) -> Any:
         tab = TabView(
             f"{AUTOHIDE_TAB_LEFT_ARROW} STREAMS & TOPICS {AUTOHIDE_TAB_LEFT_ARROW}"
