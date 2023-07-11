@@ -2134,17 +2134,17 @@ class TestModel:
             ),
         ],
         ids=[
-            "visual_notification is on -> no effect due to mute",
-            "visual_notification is off, and both topic and stream is muted",
-            "visual_notification is off, only topic is muted",
-            "visual_notification is off, neither topic or stream is muted",
+            "visual_notification_is_on-> no effect due to mute",
+            "visual_notification_is_off, and both topic and stream is muted",
+            "visual_notification_is_off, only topic is muted",
+            "visual_notification_is_off, neither topic or stream is muted",
         ],
     )
     def test_notify_user_with_alert_words(
         self,
         mocker,
         model,
-        stream_msg_fixture,
+        message_fixture,
         user_id,
         flags,
         visual_notification_status,
