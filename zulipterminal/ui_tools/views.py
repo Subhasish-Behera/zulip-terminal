@@ -429,7 +429,9 @@ class TopicsView(urwid.Frame):
         self.empty_search = False
 
     def _set_initial_focus(self) -> None:
-        saved_topic_state = self.view.saved_topic_in_stream_id(self.stream_button.stream_id)
+        saved_topic_state = self.view.saved_topic_in_stream_id(
+            self.stream_button.stream_id
+        )
         if saved_topic_state is not None:
             for i, topic in enumerate(self.log):
                 if topic.topic_name is saved_topic_state:
