@@ -429,11 +429,12 @@ class TopicsView(urwid.Frame):
         self.empty_search = False
 
     def _set_initial_focus(self) -> None:
-        if self.view.stream_topic_map[self.stream_button.stream_id] is not None:
+        saved_topic_state = self.view.stream_topic_map[self.stream_button.stream_id]
+        if saved_topic_state is not None:
             for i, topic in enumerate(self.log):
                 if (
                     topic.topic_name
-                    is self.view.stream_topic_map[self.stream_button.stream_id]
+                    is saved_topic_state
                 ):
                     self.list_box.focus_position = i
                     break
