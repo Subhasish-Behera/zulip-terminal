@@ -641,7 +641,9 @@ class TestTopicsView:
         ]
         topic_view.log = urwid.SimpleFocusListWalker(topic_view.list_box.body)
         topic_view.list_box.focus_position = 0
+
         topic_view._set_initial_focus()
+
         assert topic_view.list_box.focus_position == expected_focus_index
 
     @pytest.mark.parametrize(
