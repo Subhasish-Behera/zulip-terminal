@@ -44,7 +44,7 @@ class View(urwid.WidgetWrap):
         self.unpinned_streams = self.model.unpinned_streams
         self.write_box = WriteBox(self)
         self.search_box = MessageSearchBox(self.controller)
-        self.stream_topic_map: Dict[int, Any] = {}
+        self.stream_topic_map: Dict[int, Optional[str]] = {}
         for stream_id in self.model.stream_dict:
             self.stream_topic_map[stream_id] = None
 
@@ -53,8 +53,9 @@ class View(urwid.WidgetWrap):
 
         super().__init__(self.main_window())
 
-    def update_stream_topic_map(self,stream_id: int,topic_name: str) -> None:
+    def update_stream_topic_map(self, stream_id: int, topic_name: str) -> None:
         self.stream_topic_map[stream_id] = topic_name
+
     def left_column_view(self) -> Any:
         tab = TabView(
             f"{AUTOHIDE_TAB_LEFT_ARROW} STREAMS & TOPICS {AUTOHIDE_TAB_LEFT_ARROW}"
