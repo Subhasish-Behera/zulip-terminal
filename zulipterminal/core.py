@@ -125,7 +125,8 @@ class Controller:
 
     def set_uri(self, value: str) -> None:
         self._uri = value
-        self.uri_updated_event.set()
+        print("2",self._uri)
+        #self.uri_updated_event.set()
 
     def raise_exception_in_main_thread(
         self, exc_info: ExceptionInfo, *, critical: bool
@@ -295,7 +296,7 @@ class Controller:
         file_upload_view = FileUploadView(self, "Upload File(Enter the location)")
         self.show_pop_up(file_upload_view, "area:msg")
 
-        return ""  # Supposed to return the Uri
+        return str(self._uri)  # Supposed to return the Uri
     def show_emoji_picker(self, message: Message) -> None:
         all_emoji_units = [
             (emoji_name, emoji["code"], emoji["aliases"])

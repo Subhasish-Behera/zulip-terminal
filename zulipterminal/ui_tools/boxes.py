@@ -723,8 +723,7 @@ class WriteBox(urwid.Pile):
             uri = self.model.controller.show_file_upload_popup()
             #uri_link = uri.result
             #These two lines will add the url link and file name as text in the write box.
-            # self.contents[self.FOCUS_CONTAINER_MESSAGE][
-            # self.FOCUS_MESSAGE_BOX_BODY].edit_text += uri_link
+            self.contents[self.FOCUS_CONTAINER_MESSAGE][self.FOCUS_MESSAGE_BOX_BODY].edit_text += uri
         if is_command_key("SEND_MESSAGE", key):
             self.send_stop_typing_status()
             if self.compose_box_status == "open_with_stream":

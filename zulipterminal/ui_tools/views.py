@@ -2,7 +2,7 @@
 UI views for larger elements such as Streams, Messages, Topics, Help, etc
 """
 
-import threading
+import threading,time
 from datetime import datetime
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 
@@ -1192,9 +1192,12 @@ class FileUploadView(PopUpView):
             # urwid.Pile(msg_box.footer),
         )
 
+    time.sleep(30)
+
     def _handle_file_upload(self, file_location):
         file_location1 = file_location
         self.uri = self.model.get_file_upld_uri(file_location1)
+        print(self.uri)
         self.controller.set_uri(self.uri)  # Update the uri in the controller
 
     def keypress(self, size: urwid_Size, key: str) -> str:
