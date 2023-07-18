@@ -2154,10 +2154,10 @@ class TestModel:
         is_topic_muted,
         no_of_times_notify_call_expected,
     ):
-        stream_msg_fixture.update(flags)
+        message_fixture.update(flags)
         self.controller.notify_enabled = True
-        stream_msg_fixture.update(display_recipient)
-        stream_msg_fixture.update(subject)
+        message_fixture.update(display_recipient)
+        message_fixture.update(subject)
         mocker.patch.object(
             model,
             "is_visual_notifications_enabled",
@@ -2166,7 +2166,7 @@ class TestModel:
         mocker.patch.object(model, "is_muted_stream", return_value=is_stream_muted)
         mocker.patch.object(model, "is_muted_topic", return_value=is_topic_muted)
         notify = mocker.patch(MODULE + ".notify")
-        model.notify_user(stream_msg_fixture)
+        model.notify_user(message_fixture)
         if no_of_times_notify_call_expected == 1:
             assert notify.called
         else:
