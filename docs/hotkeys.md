@@ -97,4 +97,5 @@
 |Jump to the previous line|<kbd>up</kbd> / <kbd>ctrl</kbd> + <kbd>p</kbd>|
 |Jump to the next line|<kbd>down</kbd> / <kbd>ctrl</kbd> + <kbd>n</kbd>|
 |Clear compose box|<kbd>ctrl</kbd> + <kbd>l</kbd>|
+|Upload file|<kbd>ctrl</kbd> + <kbd>o</kbd>|
 

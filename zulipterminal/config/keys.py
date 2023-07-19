@@ -390,6 +390,11 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
         'help_text': 'Clear compose box',
         'key_category': 'msg_compose',
     },
+    'FILE_UPLOAD': {
+        'keys': ['ctrl o'],
+        'help_text': 'Upload file',
+        'key_category': 'msg_compose',
+    },
     'FULL_RENDERED_MESSAGE': {
         'keys': ['f'],
         'help_text': 'Show/hide full rendered message (from message information)',
