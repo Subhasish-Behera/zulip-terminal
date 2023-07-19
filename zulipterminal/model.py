@@ -557,6 +557,11 @@ class Model:
             notify_if_message_sent_outside_narrow(composition, self.controller)
         return message_was_sent
 
+    def get_file_upld_uri(self, file_loctn: str) -> str:
+        with open(file_loctn, "rb") as fp:
+            result = self.client.upload_file(fp)
+        return result["uri"]
+
     def update_private_message(self, msg_id: int, content: str) -> bool:
         request: PrivateMessageUpdateRequest = {
             "message_id": msg_id,
