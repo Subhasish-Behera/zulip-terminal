@@ -77,6 +77,7 @@ class TestModel:
             num_before=30, num_after=10, anchor=None
         )
         assert model.initial_data == initial_data
+        print(model.initial_data)
         assert model.server_version == initial_data["zulip_version"]
         assert model.server_feature_level == initial_data.get("zulip_feature_level")
         assert model.user_id == user_profile["user_id"]

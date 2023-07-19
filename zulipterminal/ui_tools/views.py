@@ -1172,10 +1172,12 @@ class FileUploadView(PopUpView):
     def __init__(
         self,
         controller: Any,
+        write_box: Any,
         title: str,
     ) -> None:
         self.controller = controller
         self.model = controller.model
+        self.write_box=write_box
         self.uri = None
         max_cols, max_rows = controller.maximum_popup_dimensions()
         self.predefined_text = urwid.Text("Location : ")
@@ -1192,13 +1194,13 @@ class FileUploadView(PopUpView):
             # urwid.Pile(msg_box.footer),
         )
 
-    time.sleep(30)
+    #time.sleep(30)
 
     def _handle_file_upload(self, file_location):
-        file_location1 = file_location
-        self.uri = self.model.get_file_upld_uri(file_location1)
+        self.uri = self.model.get_file_upld_uri(file_location)
         print(self.uri)
-        self.controller.set_uri(self.uri)  # Update the uri in the controller
+        file_name = file_location.split('/')[-1]
+        self.write_box.contents[self.write_box.FOCUS_CONTAINER_MESSAGE][self.write_box.FOCUS_MESSAGE_BOX_BODY].edit_text += f"[{file_name}](/{str(self.uri)})"
 
     def keypress(self, size: urwid_Size, key: str) -> str:
         if is_command_key("FILE_UPLOAD", key):

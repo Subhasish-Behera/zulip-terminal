@@ -85,10 +85,10 @@ class Controller:
         self.debug_path = debug_path
 
 
-        self._uri = None
-
-        # This event is set when the user key presses to close the popup which is the time to start processing the file location for the uri
-        self.uri_updated_event = threading.Event()
+        # self._uri = None
+        #
+        # # This event is set when the user key presses to close the popup which is the time to start processing the file location for the uri
+        # self.uri_updated_event = threading.Event()
 
         self._editor: Optional[Any] = None
 
@@ -119,14 +119,14 @@ class Controller:
         signal.signal(signal.SIGINT, self.exit_handler)
 
 
-    @property
-    def uri(self) -> str:
-        return self._uri
-
-    def set_uri(self, value: str) -> None:
-        self._uri = value
-        print("2",self._uri)
-        #self.uri_updated_event.set()
+    # @property
+    # def uri(self) -> str:
+    #     return self._uri
+    #
+    # def set_uri(self, value: str) -> None:
+    #     self._uri = value
+    #     print("2",self._uri)
+    #     #self.uri_updated_event.set()
 
     def raise_exception_in_main_thread(
         self, exc_info: ExceptionInfo, *, critical: bool
@@ -292,11 +292,10 @@ class Controller:
         )
         self.show_pop_up(msg_info_view, "area:msg")
 
-    def show_file_upload_popup(self) -> None:
-        file_upload_view = FileUploadView(self, "Upload File(Enter the location)")
+    def show_file_upload_popup(self,write_box) -> None:
+        file_upload_view = FileUploadView(self,write_box, "Upload File(Enter the location)")
         self.show_pop_up(file_upload_view, "area:msg")
 
-        return str(self._uri)  # Supposed to return the Uri
     def show_emoji_picker(self, message: Message) -> None:
         all_emoji_units = [
             (emoji_name, emoji["code"], emoji["aliases"])
