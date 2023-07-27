@@ -4,7 +4,6 @@ UI views for larger elements such as Streams, Messages, Topics, Help, etc
 
 import threading
 from datetime import datetime
-from urllib.parse import urlparse
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 import pytz
