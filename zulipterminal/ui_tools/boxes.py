@@ -710,7 +710,7 @@ class WriteBox(urwid.Pile):
 
         return emoji_typeahead, emojis
 
-    def insert_uri(self, file_name: str, uri: str) -> None:
+    def append_uri_and_filename(self, file_name: str, uri: str) -> None:
         edit_widget = self.contents[self.FOCUS_CONTAINER_MESSAGE][
             self.FOCUS_MESSAGE_BOX_BODY
         ]
