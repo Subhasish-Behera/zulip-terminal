@@ -278,7 +278,7 @@ class Controller:
 
     def show_file_upload_popup(self, write_box: WriteBox) -> None:
         file_upload_view = FileUploadView(
-            self, write_box, "Upload File(Enter the location)"
+            self, write_box, "Upload File"
         )
         self.show_pop_up(file_upload_view, "area:msg")
 
