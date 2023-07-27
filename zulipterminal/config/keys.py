@@ -126,6 +126,11 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
         'help_text': 'New message to a person or group of people',
         'key_category': 'msg_actions',
     },
+    'FILE_UPLOAD': {
+        'keys': ['ctrl o'],
+        'help_text': 'Upload file',
+        'key_category': 'msg_compose',
+    },
     'CYCLE_COMPOSE_FOCUS': {
         'keys': ['tab'],
         'help_text': 'Cycle through recipient and content boxes',
@@ -314,11 +319,6 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
         'keys': ['i'],
         'help_text': 'View user information (From Users list)',
         'key_category': 'general',
-    },
-    'FILE_UPLOAD': {
-        'keys': ['ctrl o'],
-        'help_text': 'Upload file',
-        'key_category': 'msg_compose',
     },
     'BEGINNING_OF_LINE': {
         'keys': ['ctrl a'],
