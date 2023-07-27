@@ -4,6 +4,7 @@ UI views for larger elements such as Streams, Messages, Topics, Help, etc
 
 import threading
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 import pytz
@@ -1193,7 +1194,8 @@ class FileUploadView(PopUpView):
 
     def _handle_file_upload(self, file_location: str) -> None:
         self.uri = self.model.get_file_upload_uri(file_location)
-        file_name = file_location.split("/")[-1]
+        file_path = Path(file_location)
+        file_name = file_path.name
         self.write_box.append_uri_and_filename(file_name, self.uri)
 
     def keypress(self, size: urwid_Size, key: str) -> str:
