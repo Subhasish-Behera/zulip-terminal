@@ -315,6 +315,11 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
         'help_text': 'View user information (From Users list)',
         'key_category': 'general',
     },
+    'FILE_UPLOAD': {
+        'keys': ['ctrl o'],
+        'help_text': 'Upload file',
+        'key_category': 'msg_compose',
+    },
     'BEGINNING_OF_LINE': {
         'keys': ['ctrl a'],
         'help_text': 'Jump to the beginning of line',
@@ -388,11 +393,6 @@ KEY_BINDINGS: Dict[str, KeyBinding] = {
     'CLEAR_MESSAGE': {
         'keys': ['ctrl l'],
         'help_text': 'Clear compose box',
-        'key_category': 'msg_compose',
-    },
-    'FILE_UPLOAD': {
-        'keys': ['ctrl o'],
-        'help_text': 'Upload file',
         'key_category': 'msg_compose',
     },
     'FULL_RENDERED_MESSAGE': {

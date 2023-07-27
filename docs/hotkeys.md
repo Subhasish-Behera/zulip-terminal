@@ -82,6 +82,7 @@
 |Autocomplete @mentions, #stream_names, :emoji: and topics|<kbd>ctrl</kbd> + <kbd>f</kbd>|
 |Cycle through autocomplete suggestions in reverse|<kbd>ctrl</kbd> + <kbd>r</kbd>|
 |Narrow to compose box message recipient|<kbd>meta</kbd> + <kbd>.</kbd>|
+|Upload file|<kbd>ctrl</kbd> + <kbd>o</kbd>|
 |Jump to the beginning of line|<kbd>ctrl</kbd> + <kbd>a</kbd>|
 |Jump to the end of line|<kbd>ctrl</kbd> + <kbd>e</kbd>|
 |Jump backward one word|<kbd>meta</kbd> + <kbd>b</kbd>|
@@ -97,5 +98,4 @@
 |Jump to the previous line|<kbd>up</kbd> / <kbd>ctrl</kbd> + <kbd>p</kbd>|
 |Jump to the next line|<kbd>down</kbd> / <kbd>ctrl</kbd> + <kbd>n</kbd>|
 |Clear compose box|<kbd>ctrl</kbd> + <kbd>l</kbd>|
-|Upload file|<kbd>ctrl</kbd> + <kbd>o</kbd>|
 
