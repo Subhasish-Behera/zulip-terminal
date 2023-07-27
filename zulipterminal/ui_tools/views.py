@@ -4,6 +4,7 @@ UI views for larger elements such as Streams, Messages, Topics, Help, etc
 
 import threading
 from datetime import datetime
+from urllib.parse import urlparse
 from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Union
 
 import pytz
@@ -1192,7 +1193,7 @@ class FileUploadView(PopUpView):
         )
 
     def _handle_file_upload(self, file_location: str) -> None:
-        self.uri = self.model.get_file_upld_uri(file_location)
+        self.uri = self.model.get_file_upload_uri(file_location)
         file_name = file_location.split("/")[-1]
         self.write_box.insert_uri(file_name, self.uri)
 
