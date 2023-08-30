@@ -1194,9 +1194,13 @@ class FileUploadView(PopUpView):
 
     def _handle_file_upload(self, file_location: str) -> None:
         self.uri = self.model.get_file_upload_uri(file_location)
-        file_path = Path(file_location)
-        file_name = file_path.name
-        self.write_box.append_uri_and_filename(file_name, self.uri)
+        if self.uri is not None:
+            file_path = Path(file_location)
+            file_name = file_path.name
+            self.write_box.append_uri_and_filename(file_name, self.uri)
+        else:
+            self.controller.report_error(["ERROR: Unable to get the URI"])
+        self.controller.exit_popup()
 
     def keypress(self, size: urwid_Size, key: str) -> str:
         if is_command_key("ENTER", key):
