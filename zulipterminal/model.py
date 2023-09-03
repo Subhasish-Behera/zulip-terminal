@@ -558,7 +558,7 @@ class Model:
             notify_if_message_sent_outside_narrow(composition, self.controller)
         return message_was_sent
 
-    def get_file_upload_uri(self, file_location: str) -> str:
+    def get_file_upload_uri(self, file_location: str) -> Optional[str]:
         if os.path.exists(file_location):
             with open(file_location, "rb") as fp:
                 result = self.client.upload_file(fp)
