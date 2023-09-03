@@ -1526,6 +1526,15 @@ class TestWriteBox:
         else:
             self.view.set_footer_text.assert_not_called()
 
+
+    @pytest.mark.parametrize("file_name, uri, expected_result",[
+    ("example.txt", "http://example.com/example.txt", "Initial content[example.txt](http://example.com/example.txt)"),
+    ("file.txt", "http://example.com/file.txt", "Initial content[file.txt](http://example.com/file.txt)"),
+    ])
+    def test_append_uri_and_filename(self, write_box: WriteBox,file_name,uri,expected_result):
+        initial_edit_text = "Initial content"
+        write_box.contents[]
+        pass
     @pytest.mark.parametrize(
         [
             "initial_focus_name",
