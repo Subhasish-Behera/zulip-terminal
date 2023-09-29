@@ -431,7 +431,8 @@ class Controller:
 
         # Until conversation becomes "inactive" like when a `stop` event is sent
         while self.active_conversation_info:
-            active_conversation_info = ", ".join(self.active_conversation_info.values())no_of_typing_users = len(self.active_conversation_info)
+            active_conversation_info = ", ".join(self.active_conversation_info.values())
+            no_of_typing_users = len(self.active_conversation_info)
             if no_of_typing_users == 1:
                 typing_phrase = " is typing"
             elif no_of_typing_users < 4:
