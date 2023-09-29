@@ -1455,8 +1455,6 @@ class Model:
             and sender_email in narrow[0][1].split(",")
             and sender_id != self.user_id
         ):
-            print(sender_id)
-            print(sender_email)
             if event["op"] == "start":
                 sender_name = self.user_dict[sender_email]["full_name"]
                 active_conversation_info[sender_id] = sender_name

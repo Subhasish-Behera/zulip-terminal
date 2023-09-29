@@ -3049,7 +3049,7 @@ class TestModel:
                     "id": 0,
                 },
                 False,
-                {"sender_name": "hamlet"},
+                {4: "hamlet"},
                 True,
                 id="in_pm_narrow_with_sender_typing:start",
             ),
@@ -3065,7 +3065,7 @@ class TestModel:
                     "id": 0,
                 },
                 True,
-                {"sender_name": "hamlet"},
+                {4: "hamlet"},
                 False,
                 id="in_pm_narrow_with_sender_typing:start_while_animation_in_progress",
             ),
@@ -3172,8 +3172,8 @@ class TestModel:
 
         if expected_active_conversation_info:
             assert (
-                model.controller.active_conversation_info["sender_name"]
-                == expected_active_conversation_info["sender_name"]
+                model.controller.active_conversation_info
+                == expected_active_conversation_info
             )
         assert show_typing_notification.called == expected_show_typing_notification
 
